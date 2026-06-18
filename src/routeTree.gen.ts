@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CriarIndexRouteImport } from './routes/criar.index'
+import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const CriarIndexRoute = CriarIndexRouteImport.update({
   path: '/criar/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CriarCategoryRoute = CriarCategoryRouteImport.update({
+  id: '/criar/$category',
+  path: '/criar/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
   '/criar': typeof CriarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/criar/'
+  fullPaths: '/' | '/criar/$category' | '/criar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/criar'
-  id: '__root__' | '/' | '/criar/'
+  to: '/' | '/criar/$category' | '/criar'
+  id: '__root__' | '/' | '/criar/$category' | '/criar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CriarCategoryRoute: typeof CriarCategoryRoute
   CriarIndexRoute: typeof CriarIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CriarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/criar/$category': {
+      id: '/criar/$category'
+      path: '/criar/$category'
+      fullPath: '/criar/$category'
+      preLoaderRoute: typeof CriarCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CriarCategoryRoute: CriarCategoryRoute,
   CriarIndexRoute: CriarIndexRoute,
 }
 export const routeTree = rootRouteImport
