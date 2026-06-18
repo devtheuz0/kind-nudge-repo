@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CriarIndexRouteImport } from './routes/criar.index'
+import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CriarIndexRoute = CriarIndexRouteImport.update({
+  id: '/criar/',
+  path: '/criar/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CriarCategoryRoute = CriarCategoryRouteImport.update({
+  id: '/criar/$category',
+  path: '/criar/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
+  '/criar/': typeof CriarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
+  '/criar': typeof CriarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/criar/$category': typeof CriarCategoryRoute
+  '/criar/': typeof CriarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/criar/$category' | '/criar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/criar/$category' | '/criar'
+  id: '__root__' | '/' | '/criar/$category' | '/criar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CriarCategoryRoute: typeof CriarCategoryRoute
+  CriarIndexRoute: typeof CriarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +68,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/criar/': {
+      id: '/criar/'
+      path: '/criar'
+      fullPath: '/criar/'
+      preLoaderRoute: typeof CriarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/criar/$category': {
+      id: '/criar/$category'
+      path: '/criar/$category'
+      fullPath: '/criar/$category'
+      preLoaderRoute: typeof CriarCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CriarCategoryRoute: CriarCategoryRoute,
+  CriarIndexRoute: CriarIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
