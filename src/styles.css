@@ -124,8 +124,9 @@
   color: var(--color-foreground);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-}
-@utility memora-input {
   &::placeholder { color: var(--color-muted-foreground); }
-  &:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent); }
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent);
+  }
 }
