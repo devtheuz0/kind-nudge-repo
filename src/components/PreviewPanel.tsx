@@ -6,18 +6,17 @@ import { Tribute } from "./Tribute";
 export function PreviewPanel() {
   const [open, setOpen] = useState(false);
   // Subscribe to whole state — used inside open panel only
-  const data = useBuilder((s) => ({
-    category: s.category,
-    fromName: s.fromName,
-    toName: s.toName,
-    startDate: s.startDate,
-    openingPhrase: s.openingPhrase,
-    mainMessage: s.mainMessage,
-    media: s.media,
-    timeline: s.timeline,
-    templateId: s.templateId,
-    music: s.music,
-  }));
+  const category = useBuilder((s) => s.category);
+  const fromName = useBuilder((s) => s.fromName);
+  const toName = useBuilder((s) => s.toName);
+  const startDate = useBuilder((s) => s.startDate);
+  const openingPhrase = useBuilder((s) => s.openingPhrase);
+  const mainMessage = useBuilder((s) => s.mainMessage);
+  const media = useBuilder((s) => s.media);
+  const timeline = useBuilder((s) => s.timeline);
+  const templateId = useBuilder((s) => s.templateId);
+  const music = useBuilder((s) => s.music);
+  const data = { category, fromName, toName, startDate, openingPhrase, mainMessage, media, timeline, templateId, music };
 
   useEffect(() => {
     if (!open) return;
