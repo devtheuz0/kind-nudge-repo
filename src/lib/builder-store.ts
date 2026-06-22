@@ -26,7 +26,7 @@ export const CATEGORIES: {
   { id: "pai",         emoji: "⭐", label: "Para meu pai",     hint: "Pai herói, gratidão",          defaultTemplate: "constelacao" },
   { id: "amiga",       emoji: "💛", label: "Para amiga(o)",    hint: "Amizade que vira família",     defaultTemplate: "jardim" },
   { id: "filho",       emoji: "🧸", label: "Para meu filho(a)",hint: "Crescimento, primeiros passos",defaultTemplate: "polaroid" },
-  { id: "avos",        emoji: "👵", label: "Para os avós",     hint: "Histórias de uma vida",        defaultTemplate: "memoria" },
+  { id: "avos",        emoji: "👵", label: "Para os avós",     hint: "Histórias de uma vida",        defaultTemplate: "vela" },
   { id: "casamento",   emoji: "💍", label: "Casamento / Bodas",hint: "Aniversário de casamento",     defaultTemplate: "bodas" },
   { id: "aniversario", emoji: "🎂", label: "Aniversário",      hint: "Surpresa especial",            defaultTemplate: "polaroid" },
   { id: "formatura",   emoji: "🎓", label: "Formatura",        hint: "Conquista, vitória",           defaultTemplate: "constelacao" },
