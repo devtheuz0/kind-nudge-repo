@@ -3,6 +3,7 @@
  * Usado no preview ao vivo, no preview final e (futuramente) na URL pública.
  */
 import { Pause, Play } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CATEGORIES,
