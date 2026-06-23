@@ -190,22 +190,47 @@ function Counter({ date, compact }: { date: string; compact: boolean }) {
 function MusicPlayer({ track }: { track: MusicTrack }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+
   useEffect(() => {
-    if (!audioRef.current) audioRef.current = new Audio(track.previewUrl);
-    audioRef.current.src = track.previewUrl;
-    audioRef.current.loop = true;
-    return () => { audioRef.current?.pause(); };
+    const a = new Audio(track.previewUrl);
+    a.loop = true;
+    a.volume = 0.7;
+    audioRef.current = a;
+    // Tenta autoplay imediatamente — alguns browsers bloqueiam sem gesto
+    const tryPlay = a.play();
+    if (tryPlay && typeof tryPlay.then === "function") {
+      tryPlay.then(() => setPlaying(true)).catch(() => setBlocked(true));
+    }
+    // Primeiro clique em qualquer lugar destrava
+    const unlock = () => {
+      if (audioRef.current && !playing) {
+        audioRef.current.play().then(() => { setPlaying(true); setBlocked(false); }).catch(() => {});
+      }
+      window.removeEventListener("pointerdown", unlock);
+    };
+    window.addEventListener("pointerdown", unlock, { once: true });
+    return () => {
+      a.pause();
+      window.removeEventListener("pointerdown", unlock);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [track.previewUrl]);
+
   const toggle = () => {
     if (!audioRef.current) return;
     if (playing) { audioRef.current.pause(); setPlaying(false); }
-    else { audioRef.current.play().catch(() => {}); setPlaying(true); }
+    else { audioRef.current.play().then(() => { setPlaying(true); setBlocked(false); }).catch(() => {}); }
   };
+
   return (
     <div className="sticky bottom-4 z-20 mx-auto mt-8 flex w-[min(92%,420px)] items-center gap-3 rounded-full border border-primary/40 bg-background/85 p-2 pr-4 backdrop-blur glow-soft">
       <button
         onClick={toggle}
-        className="rounded-full bg-primary p-2 text-primary-foreground"
+        className={cn(
+          "rounded-full bg-primary p-2 text-primary-foreground",
+          blocked && "animate-pulse",
+        )}
         aria-label={playing ? "Pausar" : "Tocar"}
       >
         {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -213,8 +238,11 @@ function MusicPlayer({ track }: { track: MusicTrack }) {
       <img src={track.artwork} alt="" className="h-9 w-9 rounded-full" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-semibold">{track.title}</p>
-        <p className="truncate text-[10px] text-muted-foreground">{track.artist}</p>
+        <p className="truncate text-[10px] text-muted-foreground">
+          {blocked ? "Toque para tocar a música" : track.artist}
+        </p>
       </div>
     </div>
   );
 }
+
