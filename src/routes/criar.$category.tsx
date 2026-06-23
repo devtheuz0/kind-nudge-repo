@@ -2,11 +2,19 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   ArrowRight,
+  Calendar,
+  Camera,
   Check,
+  CheckCircle2,
   Edit3,
+  Eye,
+  Film,
   Image as ImageIcon,
   Loader2,
+  Mic2,
+  Palette,
   Plus,
+  Send,
   Sparkles,
   Trash2,
   Upload,
@@ -23,7 +31,7 @@ import {
   type TemplateId,
 } from "@/lib/builder-store";
 import { cn } from "@/lib/utils";
-import { Memo, type MemoMood } from "@/components/Memo";
+import { Memo } from "@/components/Memo";
 import { TemplateBackdrop } from "@/components/templates/TemplateBackdrop";
 import { MusicSearch } from "@/components/MusicSearch";
 import { PreviewPanel } from "@/components/PreviewPanel";
@@ -37,12 +45,12 @@ export const Route = createFileRoute("/criar/$category")({
 });
 
 const STEPS = [
-  { n: 1, label: "Quem é",        memo: "wave" as MemoMood },
-  { n: 2, label: "Mídia",         memo: "photo" as MemoMood },
-  { n: 3, label: "Linha do tempo",memo: "thinking" as MemoMood },
-  { n: 4, label: "Visual & música",memo: "heart" as MemoMood },
-  { n: 5, label: "Prévia",         memo: "celebrate" as MemoMood },
-  { n: 6, label: "Publicar",       memo: "celebrate" as MemoMood },
+  { n: 1, label: "Quem é" },
+  { n: 2, label: "Mídia" },
+  { n: 3, label: "Linha do tempo" },
+  { n: 4, label: "Visual & música" },
+  { n: 5, label: "Prévia" },
+  { n: 6, label: "Publicar" },
 ] as const;
 
 function Builder() {
@@ -56,58 +64,61 @@ function Builder() {
   const saving = useBuilder((s) => s.saving);
   const currentCategory = useBuilder((s) => s.category);
 
-  // Sync route param into store (only when different)
   useEffect(() => {
-    if (
-      CATEGORIES.some((c) => c.id === category) &&
-      currentCategory !== category
-    ) {
+    if (CATEGORIES.some((c) => c.id === category) && currentCategory !== category) {
       setCategory(category as Category);
     }
   }, [category, setCategory, currentCategory]);
 
   return (
-    <main className="bg-night flex min-h-screen flex-col">
+    <main className="bg-warmlight relative flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/" preload="intent" className="flex items-center gap-2 font-display text-base font-bold">
-            <Memo size={28} animate={false} /> Memora
+            <Memo mood="avatar" size={26} animate={false} /> Memora
           </Link>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {saving === "saving" && (<><Loader2 className="h-3 w-3 animate-spin" /> Salvando…</>)}
-            {saving === "saved" && (<><Check className="h-3 w-3 text-success" /> Salvo</>)}
-          </div>
+          <SaveIndicator saving={saving} />
           <Link to="/criar" preload="intent" className="rounded-md p-2 text-muted-foreground hover:bg-card hover:text-foreground" aria-label="Sair">
             <X className="h-4 w-4" />
           </Link>
         </div>
 
         <div className="mx-auto max-w-5xl px-4 pb-3 sm:px-6">
-          <div className="flex items-center gap-1.5">
-            {STEPS.map((s, i) => (
-              <div key={s.n} className="flex flex-1 items-center gap-1.5">
+          {/* mobile: step number + progress bar */}
+          <div className="flex items-center gap-3 sm:hidden">
+            <span className="font-mono text-[11px] text-muted-foreground">{step}/{STEPS.length}</span>
+            <div className="flex flex-1 gap-1">
+              {STEPS.map((s) => (
+                <div key={s.n} className={cn("h-1.5 flex-1 rounded-full", s.n <= step ? "bg-primary" : "bg-border")} />
+              ))}
+            </div>
+          </div>
+          {/* desktop: full bar with labels and active underline */}
+          <div className="hidden sm:block">
+            <div className="flex items-center gap-1.5">
+              {STEPS.map((s) => (
+                <div key={s.n} className={cn("h-1.5 flex-1 rounded-full transition", s.n <= step ? "bg-primary" : "bg-border")} />
+              ))}
+            </div>
+            <div className="mt-2 flex justify-between text-[11px]">
+              {STEPS.map((s) => (
                 <button
+                  key={s.n}
                   onClick={() => s.n < step && setStep(s.n as never)}
+                  disabled={s.n >= step}
                   className={cn(
-                    "h-1.5 flex-1 rounded-full transition",
-                    s.n <= step ? "bg-primary" : "bg-border",
+                    "relative pb-1 transition",
+                    s.n === step ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
                     s.n < step && "cursor-pointer",
                   )}
-                />
-                {i === STEPS.length - 1 && (
-                  <span className="ml-2 font-mono text-[11px] text-muted-foreground">
-                    {step}/{STEPS.length}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="mt-2 hidden justify-between text-[11px] text-muted-foreground sm:flex">
-            {STEPS.map((s) => (
-              <span key={s.n} className={cn(s.n === step && "font-semibold text-primary")}>
-                {s.label}
-              </span>
-            ))}
+                >
+                  {s.label}
+                  {s.n === step && (
+                    <span className="absolute -bottom-0.5 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
@@ -127,30 +138,59 @@ function Builder() {
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <button
             onClick={() => (step === 1 ? navigate({ to: "/criar" }) : prev())}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2.5 text-sm font-medium transition hover:bg-card"
+            className="btn-ghost text-sm"
           >
             <ArrowLeft className="h-4 w-4" /> Voltar
           </button>
           <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
             Etapa {step} de {STEPS.length}
           </span>
-          <button
-            onClick={() => {
-              if (step === 6) {
-                alert("Mock: indo para checkout 🎉");
-                return;
-              }
-              next();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground glow-primary transition hover:brightness-110"
-          >
-            {step === 6 ? "Finalizar e pagar" : step === 5 ? "Tudo certo, publicar" : "Próximo"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <NextButton step={step} onNext={next} />
         </div>
       </footer>
     </main>
+  );
+}
+
+function NextButton({ step, onNext }: { step: number; onNext: () => void }) {
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const handle = () => {
+    if (step === 6) {
+      setSubmitting(true);
+      setTimeout(() => navigate({ to: "/" }), 1800);
+      return;
+    }
+    onNext();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  return (
+    <button onClick={handle} disabled={submitting} className="btn-gold text-sm">
+      {submitting ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" /> Preparando checkout…
+        </>
+      ) : step === 6 ? (
+        <>Finalizar e pagar <Send className="arrow-r h-4 w-4" /></>
+      ) : step === 5 ? (
+        <>Tudo certo, publicar <ArrowRight className="arrow-r h-4 w-4" /></>
+      ) : (
+        <>Próximo <ArrowRight className="arrow-r h-4 w-4" /></>
+      )}
+    </button>
+  );
+}
+
+function SaveIndicator({ saving }: { saving: "idle" | "saving" | "saved" }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      {saving === "saving" && (<><Loader2 className="h-3 w-3 animate-spin" /> Salvando…</>)}
+      {saving === "saved" && (
+        <span key={Date.now()} className="flex items-center gap-1 animate-in fade-in zoom-in duration-300 text-success">
+          <CheckCircle2 className="h-3.5 w-3.5" /> Salvo
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -172,14 +212,24 @@ function StepOne() {
     setGenLoading(false);
   };
 
+  const max = 140;
+  const left = max - s.openingPhrase.length;
+
   return (
-    <StepShell mood="wave" title="Vamos começar" subtitle="Para quem é essa homenagem?">
-      <Field label="Seu nome">
-        <input value={s.fromName} onChange={(e) => s.patch({ fromName: e.target.value })} placeholder="Maria" className="memora-input" />
-      </Field>
-      <Field label="Nome de quem recebe">
-        <input value={s.toName} onChange={(e) => s.patch({ toName: e.target.value })} placeholder="João" className="memora-input" />
-      </Field>
+    <StepShell
+      icon={<Memo mood="wave" size={88} />}
+      eyebrow="Etapa 1"
+      title="Para quem é essa história?"
+      subtitle="Cada detalhe importa."
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Seu nome">
+          <input value={s.fromName} onChange={(e) => s.patch({ fromName: e.target.value })} placeholder="Maria" className="memora-input" />
+        </Field>
+        <Field label="Nome de quem recebe">
+          <input value={s.toName} onChange={(e) => s.patch({ toName: e.target.value })} placeholder="João" className="memora-input" />
+        </Field>
+      </div>
       <Field label="Data especial" hint="Quando se conheceram, aniversário, etc.">
         <input type="date" value={s.startDate} onChange={(e) => s.patch({ startDate: e.target.value })} className="memora-input font-mono" />
       </Field>
@@ -187,20 +237,26 @@ function StepOne() {
         <div className="relative">
           <textarea
             value={s.openingPhrase}
-            onChange={(e) => s.patch({ openingPhrase: e.target.value })}
-            rows={3}
+            onChange={(e) => s.patch({ openingPhrase: e.target.value.slice(0, max) })}
+            rows={2}
             placeholder="Escreva uma frase que abre o coração…"
-            className="memora-input pr-32 resize-none"
+            className="memora-input resize-none pr-14"
           />
-          <button
-            onClick={generate}
-            disabled={genLoading}
-            className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md bg-primary/20 px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary/30 disabled:opacity-50"
-          >
-            {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-            Gerar com IA
-          </button>
+          <span className={cn(
+            "absolute right-3 bottom-2 font-mono text-[10px]",
+            left < 20 ? "text-emotion" : "text-muted-foreground/70",
+          )}>
+            {s.openingPhrase.length}/{max}
+          </span>
         </div>
+        <button
+          onClick={generate}
+          disabled={genLoading}
+          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition hover:underline disabled:opacity-50"
+        >
+          {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+          Gerar frase com IA
+        </button>
       </Field>
     </StepShell>
   );
@@ -217,6 +273,12 @@ function StepTwo() {
   const inputRef = useRef<HTMLInputElement>(null);
   const max = plan === "temporary" ? 20 : 100;
 
+  const counts = {
+    photo: media.filter((m) => m.type === "photo").length,
+    video: media.filter((m) => m.type === "video").length,
+    audio: media.filter((m) => m.type === "audio").length,
+  };
+
   const onFiles = (files: FileList | null) => {
     if (!files) return;
     Array.from(files).forEach((file) => {
@@ -231,40 +293,52 @@ function StepTwo() {
   };
 
   return (
-    <StepShell mood="photo" title="Adicione as memórias" subtitle="Fotos, vídeos e áudios que contam essa história.">
+    <StepShell
+      icon={<IconBubble><Camera className="h-6 w-6" /></IconBubble>}
+      eyebrow="Etapa 2"
+      title="As memórias"
+      subtitle="Fotos, vídeos e áudios que contam essa história."
+    >
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); onFiles(e.dataTransfer.files); }}
-        className="glass rounded-2xl p-8 text-center"
+        onClick={() => inputRef.current?.click()}
+        className="glass cursor-pointer rounded-2xl border-dashed border-primary/40 p-5 text-center transition hover:border-primary hover:bg-primary/5"
       >
-        <Upload className="mx-auto h-8 w-8 text-primary" />
-        <p className="mt-3 text-sm">
-          Arraste arquivos aqui ou{" "}
-          <button onClick={() => inputRef.current?.click()} className="font-semibold text-primary underline-offset-4 hover:underline">
-            escolha do dispositivo
-          </button>
+        <Upload className="mx-auto h-6 w-6 text-primary" />
+        <p className="mt-2 text-sm">
+          Arraste ou <span className="font-semibold text-primary underline-offset-4 hover:underline">escolha do dispositivo</span>
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {media.length} de {max} {plan === "temporary" ? "(plano Temporário)" : "itens"}
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {media.length} de {max} {plan === "temporary" && "(plano Temporário)"}
         </p>
         <input ref={inputRef} type="file" multiple accept="image/*,video/*,audio/*" className="hidden" onChange={(e) => onFiles(e.target.files)} />
       </div>
 
-      {media.length > 0 && (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="flex flex-wrap gap-2">
+        <CountChip icon={<ImageIcon className="h-3.5 w-3.5" />} label="Fotos" n={counts.photo} />
+        <CountChip icon={<Film className="h-3.5 w-3.5" />} label="Vídeos" n={counts.video} />
+        <CountChip icon={<Mic2 className="h-3.5 w-3.5" />} label="Áudios" n={counts.audio} />
+      </div>
+
+      {media.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border bg-card/30 px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Nenhuma memória ainda. <br />
+            <span className="text-cream/80">Que tal começar com a foto favorita?</span>
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {media.map((m) => (
             <div key={m.id} className="group relative overflow-hidden rounded-xl border border-border bg-card">
               <div className="relative aspect-square bg-muted">
                 {m.type === "photo" && <img src={m.url} alt={m.name} className="h-full w-full object-cover" />}
                 {m.type === "video" && <video src={m.url} className="h-full w-full object-cover" muted />}
                 {m.type === "audio" && (
-                  <div className="flex h-full items-center justify-center text-primary"><ImageIcon className="h-8 w-8" /></div>
+                  <div className="flex h-full items-center justify-center text-primary"><Mic2 className="h-8 w-8" /></div>
                 )}
-                <button
-                  onClick={() => removeMedia(m.id)}
-                  className="absolute right-1.5 top-1.5 rounded-md bg-background/80 p-1.5 opacity-0 transition group-hover:opacity-100"
-                  aria-label="Remover"
-                >
+                <button onClick={() => removeMedia(m.id)} className="absolute right-1.5 top-1.5 rounded-md bg-background/80 p-1.5 opacity-0 transition group-hover:opacity-100" aria-label="Remover">
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -282,7 +356,26 @@ function StepTwo() {
   );
 }
 
+function CountChip({ icon, label, n }: { icon: React.ReactNode; label: string; n: number }) {
+  const active = n > 0;
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+      active ? "border-primary/60 bg-primary/15 text-primary" : "border-border bg-card/40 text-muted-foreground",
+    )}>
+      {icon} {label}
+      <span className={cn("ml-1 font-mono text-[11px]", active ? "text-primary" : "opacity-50")}>{n}</span>
+    </span>
+  );
+}
+
 /* ----------------------------- STEP 3 ----------------------------- */
+
+const SUGGESTED_MARCOS = [
+  { title: "Quando nos conhecemos", icon: "✨" },
+  { title: "Primeira viagem juntos", icon: "📍" },
+  { title: "Um momento que marcou", icon: "❤️" },
+];
 
 function StepThree() {
   const events = useBuilder((s) => s.timeline);
@@ -294,38 +387,73 @@ function StepThree() {
   const icons = ["❤️", "✨", "🌹", "🎉", "📍", "💍", "🌙", "🕯️", "🎓", "🐾"];
 
   return (
-    <StepShell mood="thinking" title="Linha do tempo" subtitle="Quais momentos marcaram tudo?">
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-muted-foreground transition hover:border-primary hover:text-foreground"
-      >
-        <Plus className="h-4 w-4" /> Adicionar marco
-      </button>
-
-      {events.length > 0 && (
-        <ol className="relative mt-6 space-y-4 border-l-2 border-primary/40 pl-6">
-          {events.map((e) => (
-            <li key={e.id} className="relative">
-              <span className="absolute -left-[34px] flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs glow-primary">
-                {e.icon}
-              </span>
-              <div className="glass rounded-xl p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-mono text-xs text-muted-foreground">
-                      {new Date(e.date).toLocaleDateString("pt-BR")}
-                    </p>
-                    <p className="mt-0.5 truncate font-semibold">{e.title}</p>
-                    {e.description && <p className="mt-1 text-sm text-muted-foreground">{e.description}</p>}
+    <StepShell
+      icon={<IconBubble><Calendar className="h-6 w-6" /></IconBubble>}
+      eyebrow="Etapa 3"
+      title="Linha do tempo"
+      subtitle="Quais momentos marcaram tudo?"
+    >
+      {events.length === 0 ? (
+        <div className="relative flex flex-col items-center px-6 py-10">
+          {/* linha vertical */}
+          <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 border-l border-dashed border-primary/40" />
+          <span className="relative z-10 grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground glow-primary">
+            <Plus className="h-4 w-4" />
+          </span>
+          <p className="relative z-10 mt-3 font-display text-lg font-bold">Seu primeiro marco</p>
+          <p className="relative z-10 mt-1 text-center text-xs text-muted-foreground">
+            Toque numa sugestão ou crie do zero.
+          </p>
+          <div className="relative z-10 mt-5 flex flex-wrap justify-center gap-2">
+            {SUGGESTED_MARCOS.map((sg) => (
+              <button
+                key={sg.title}
+                onClick={() => { setDraft({ date: "", title: sg.title, description: "", icon: sg.icon }); setOpen(true); }}
+                className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-medium transition hover:border-primary/60 hover:bg-primary/10"
+              >
+                {sg.icon} {sg.title}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="relative z-10 mt-5 btn-gold text-sm"
+          >
+            <Plus className="h-4 w-4" /> Criar marco
+          </button>
+        </div>
+      ) : (
+        <>
+          <ol className="relative space-y-4 border-l-2 border-primary/40 pl-6">
+            {events.map((e) => (
+              <li key={e.id} className="relative">
+                <span className="absolute -left-[34px] flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs glow-primary">
+                  {e.icon}
+                </span>
+                <div className="glass rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-mono text-xs text-muted-foreground">
+                        {new Date(e.date).toLocaleDateString("pt-BR")}
+                      </p>
+                      <p className="mt-0.5 truncate font-semibold">{e.title}</p>
+                      {e.description && <p className="mt-1 text-sm text-muted-foreground">{e.description}</p>}
+                    </div>
+                    <button onClick={() => removeEvent(e.id)} className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/15 hover:text-destructive">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
-                  <button onClick={() => removeEvent(e.id)} className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-destructive/15 hover:text-destructive">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+          <button
+            onClick={() => setOpen(true)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-muted-foreground transition hover:border-primary hover:text-foreground"
+          >
+            <Plus className="h-4 w-4" /> Adicionar mais um marco
+          </button>
+        </>
       )}
 
       {open && (
@@ -360,7 +488,7 @@ function StepThree() {
                   setDraft({ date: "", title: "", description: "", icon: "❤️" });
                   setOpen(false);
                 }}
-                className="w-full rounded-lg bg-primary py-2.5 text-sm font-bold text-primary-foreground glow-primary transition hover:brightness-110 disabled:opacity-40"
+                className="w-full btn-gold justify-center text-sm"
               >
                 Adicionar marco
               </button>
@@ -372,7 +500,7 @@ function StepThree() {
   );
 }
 
-/* ----------------------------- STEP 4 — visual + música ----------------------------- */
+/* ----------------------------- STEP 4 ----------------------------- */
 
 function StepFour() {
   const s = useBuilder();
@@ -389,36 +517,47 @@ function StepFour() {
   };
 
   return (
-    <StepShell mood="heart" title="Personalização" subtitle="Como ela vai parecer e soar?">
+    <StepShell
+      icon={<IconBubble><Palette className="h-6 w-6" /></IconBubble>}
+      eyebrow="Etapa 4"
+      title="Visual & música"
+      subtitle="Escolha o clima e a trilha sonora."
+    >
       <div>
         <p className="mb-3 text-sm font-semibold">Template</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {TEMPLATES.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => s.patch({ templateId: t.id as TemplateId })}
-              className={cn(
-                "group relative overflow-hidden rounded-2xl border bg-card/60 text-left transition",
-                s.templateId === t.id ? "border-primary ring-2 ring-primary/40 glow-soft" : "border-border hover:border-primary/50",
-              )}
-            >
-              <div className="relative h-28 bg-night">
-                <TemplateBackdrop template={t.id} />
-              </div>
-              <div className="flex items-start justify-between gap-3 px-3 py-2.5">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold">{t.name}</span>
-                    <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                      {t.mood}
-                    </span>
+          {TEMPLATES.map((t) => {
+            const active = s.templateId === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => s.patch({ templateId: t.id as TemplateId })}
+                className={cn(
+                  "group relative overflow-hidden rounded-2xl border bg-card/60 text-left transition",
+                  active
+                    ? "border-primary shadow-[0_0_0_2px_var(--color-primary),0_8px_32px_-6px_color-mix(in_oklab,var(--color-primary)_55%,transparent)]"
+                    : "border-border hover:border-primary/50 hover:-translate-y-0.5",
+                )}
+              >
+                {/* tag de mood no canto superior direito */}
+                <span className="absolute right-2 top-2 z-10 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-semibold text-primary backdrop-blur">
+                  {t.mood}
+                </span>
+                <div className="relative h-28 overflow-hidden bg-night">
+                  <div className="transition-transform duration-700 group-hover:scale-110">
+                    <TemplateBackdrop template={t.id} />
                   </div>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{t.desc}</p>
                 </div>
-                {s.templateId === t.id && <Check className="h-4 w-4 shrink-0 text-primary" />}
-              </div>
-            </button>
-          ))}
+                <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold">{t.name}</p>
+                    <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{t.desc}</p>
+                  </div>
+                  {active && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -427,23 +566,21 @@ function StepFour() {
       </Field>
 
       <Field label="Mensagem principal">
-        <div className="relative">
-          <textarea
-            value={s.mainMessage}
-            onChange={(e) => s.patch({ mainMessage: e.target.value })}
-            rows={8}
-            placeholder="Escreva a história que vocês escreveram juntos…"
-            className="memora-input resize-none"
-          />
-          <button
-            onClick={generateStory}
-            disabled={genLoading}
-            className="mt-2 inline-flex items-center gap-2 rounded-md bg-primary/20 px-3 py-2 text-xs font-semibold text-primary transition hover:bg-primary/30 disabled:opacity-50"
-          >
-            {genLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-            Gerar história completa com IA
-          </button>
-        </div>
+        <textarea
+          value={s.mainMessage}
+          onChange={(e) => s.patch({ mainMessage: e.target.value })}
+          rows={7}
+          placeholder={`Desde o dia que nos conhecemos, cada momento ao seu lado\nse tornou uma lembrança que quero guardar para sempre…\n\n(escreva com o coração — ou peça pra IA começar)`}
+          className="memora-input resize-none placeholder:italic placeholder:text-muted-foreground/40"
+        />
+        <button
+          onClick={generateStory}
+          disabled={genLoading}
+          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition hover:underline disabled:opacity-50"
+        >
+          {genLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+          Gerar história com IA
+        </button>
       </Field>
     </StepShell>
   );
@@ -462,31 +599,66 @@ function StepPreview() {
   const timeline = useBuilder((s) => s.timeline);
   const templateId = useBuilder((s) => s.templateId);
   const music = useBuilder((s) => s.music);
-  const data = { category, fromName, toName, startDate, openingPhrase, mainMessage, media, timeline, templateId, music };
   const setStep = useBuilder((s) => s.setStep);
+  const [full, setFull] = useState(false);
+
+  // Dados de exemplo para a prévia parecer viva mesmo sem preenchimento
+  const data = {
+    category,
+    fromName: fromName || "Maria",
+    toName: toName || "Você",
+    startDate: startDate || new Date(Date.now() - 1000 * 60 * 60 * 24 * 365).toISOString().slice(0, 10),
+    openingPhrase: openingPhrase || "Tem coisas que a gente não explica, só sente.",
+    mainMessage: mainMessage || "Cada foto, cada palavra, cada música aqui é um pedacinho da nossa história.",
+    media,
+    timeline,
+    templateId,
+    music,
+  };
+
   return (
     <div className="space-y-4 animate-in fade-in duration-300">
       <div className="text-center">
-        <Memo mood="celebrate" size={72} />
+        <Memo mood="celebrate" size={84} className="mx-auto" />
         <h1 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">Está pronto?</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Esta é a prévia exata da sua homenagem. Confira tudo antes de publicar.
+          Esta é a prévia da homenagem. Confira tudo antes de publicar.
         </p>
-        <button
-          onClick={() => setStep(1)}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-semibold hover:bg-card"
-        >
-          <Edit3 className="h-3.5 w-3.5" /> Editar
-        </button>
+        <div className="mt-3 flex items-center justify-center gap-2">
+          <button onClick={() => setStep(1)} className="btn-ghost text-xs">
+            <Edit3 className="h-3.5 w-3.5" /> Editar
+          </button>
+          <button onClick={() => setFull(true)} className="btn-gold text-xs">
+            <Eye className="h-3.5 w-3.5" /> Ver em tela cheia
+          </button>
+        </div>
       </div>
+
       <div className="overflow-hidden rounded-2xl border border-primary/30 glow-soft">
-        <Tribute data={data} />
+        <Tribute data={data} compact />
       </div>
+      <p className="text-center text-[11px] text-muted-foreground">
+        Essa é uma prévia com dados de exemplo. O resultado final usará suas fotos e mensagem reais.
+      </p>
+
+      {full && (
+        <div className="fixed inset-0 z-[70] flex flex-col bg-background animate-in fade-in duration-200">
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <p className="text-sm font-semibold">Prévia em tela cheia</p>
+            <button onClick={() => setFull(false)} className="rounded-md p-2 hover:bg-card" aria-label="Fechar">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <Tribute data={data} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-/* ----------------------------- STEP 6 — publicar ----------------------------- */
+/* ----------------------------- STEP 6 ----------------------------- */
 
 function StepPublish() {
   const s = useBuilder();
@@ -504,44 +676,50 @@ function StepPublish() {
     [s.slug],
   );
 
-  useEffect(() => {
-    if (!sanitized || sanitized.length < 3) { setCheck("idle"); return; }
+  const runCheck = () => {
+    if (!sanitized || sanitized.length < 3) return;
     setCheck("checking");
-    const t = setTimeout(() => {
+    setTimeout(() => {
       const taken = ["joao-e-maria", "teste", "memora"].includes(sanitized);
       setCheck(taken ? "taken" : "ok");
-    }, 400);
-    return () => clearTimeout(t);
-  }, [sanitized]);
+    }, 600);
+  };
 
   const suggestions = check === "taken"
     ? [`${sanitized}-${new Date().getFullYear()}`, `${sanitized}-${Math.floor(Math.random() * 99)}`, `para-${sanitized}`]
     : [];
 
   return (
-    <StepShell mood="celebrate" title="Quase pronto!" subtitle="Como as pessoas vão encontrar?">
+    <StepShell
+      icon={<IconBubble><Send className="h-5 w-5" /></IconBubble>}
+      eyebrow="Última etapa"
+      title="Quase pronto!"
+      subtitle="Como as pessoas vão encontrar?"
+    >
       <Field label="URL personalizada">
         <div className="flex items-stretch overflow-hidden rounded-lg border border-border bg-card/60 focus-within:border-primary">
           <span className="flex items-center bg-muted px-3 font-mono text-xs text-muted-foreground">memora.app/para/</span>
           <input
             value={s.slug}
-            onChange={(e) => s.patch({ slug: e.target.value })}
+            onChange={(e) => { s.patch({ slug: e.target.value }); setCheck("idle"); }}
             placeholder="para-joao"
             className="flex-1 bg-transparent px-3 py-2.5 text-sm outline-none"
           />
-          <span className="flex w-10 items-center justify-center">
-            {check === "checking" && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-            {check === "ok" && <Check className="h-4 w-4 text-success" />}
-            {check === "taken" && <X className="h-4 w-4 text-destructive" />}
-          </span>
+          <button
+            onClick={runCheck}
+            disabled={sanitized.length < 3 || check === "checking"}
+            className="border-l border-border bg-primary/15 px-3 text-xs font-semibold text-primary transition hover:bg-primary/25 disabled:opacity-40"
+          >
+            {check === "checking" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Verificar"}
+          </button>
         </div>
-        {check === "ok" && <p className="mt-2 text-xs text-success">✓ Disponível</p>}
+        {check === "ok" && <p className="mt-2 flex items-center gap-1 text-xs text-success"><Check className="h-3 w-3" /> Disponível</p>}
         {check === "taken" && (
           <div className="mt-2 text-xs text-destructive">
             Esse link já existe. Tente:
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {suggestions.map((sg) => (
-                <button key={sg} onClick={() => s.patch({ slug: sg })} className="rounded-md bg-card px-2 py-1 font-mono text-[11px] hover:bg-primary/20">
+                <button key={sg} onClick={() => { s.patch({ slug: sg }); setCheck("idle"); }} className="rounded-md bg-card px-2 py-1 font-mono text-[11px] hover:bg-primary/20">
                   {sg}
                 </button>
               ))}
@@ -552,9 +730,28 @@ function StepPublish() {
 
       <div>
         <p className="mb-3 text-sm font-semibold">Escolha o plano</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <PlanCard id="temporary" active={s.plan === "temporary"} onClick={() => s.patch({ plan: "temporary" })} badge="Último minuto" price="R$ 19,90" name="Temporário" features={["Online por 3 dias", "Até 20 fotos", "QR Code", "Música"]} disabled={["Sem linha do tempo"]} />
-          <PlanCard id="eternal" active={s.plan === "eternal"} onClick={() => s.patch({ plan: "eternal" })} badge="Mais escolhido" highlighted price="R$ 29,90" name="Eterno" features={["Salvo para sempre", "Fotos ilimitadas", "Linha do tempo", "Analytics completo"]} />
+        <div className="space-y-3">
+          <PlanCard
+            id="eternal"
+            active={s.plan === "eternal"}
+            onClick={() => s.patch({ plan: "eternal" })}
+            badge="Mais escolhido"
+            highlighted
+            price="R$ 29,90"
+            name="Eterno"
+            tagline="Para memórias que nunca deveriam desaparecer"
+            features={["Salvo para sempre", "Fotos ilimitadas", "Linha do tempo completa", "Analytics de reações"]}
+          />
+          <PlanCard
+            id="temporary"
+            active={s.plan === "temporary"}
+            onClick={() => s.patch({ plan: "temporary" })}
+            price="R$ 19,90"
+            name="Temporário"
+            tagline="Ideal para surpresas rápidas"
+            features={["Online por 3 dias", "Até 20 fotos", "QR Code", "Música"]}
+            disabled={["Sem linha do tempo"]}
+          />
         </div>
       </div>
     </StepShell>
@@ -563,17 +760,38 @@ function StepPublish() {
 
 /* ----------------------------- shared ----------------------------- */
 
-function StepShell({ mood, title, subtitle, children }: { mood: MemoMood; title: string; subtitle: string; children: React.ReactNode }) {
+function StepShell({
+  icon,
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300">
       <div className="flex items-start gap-4">
-        <Memo mood={mood} size={64} />
-        <div className="flex-1 pt-2">
-          <h1 className="font-display text-2xl font-extrabold sm:text-3xl">{title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+        <div className="shrink-0">{icon}</div>
+        <div className="flex-1 pt-1">
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary/80">{eyebrow}</p>
+          <h1 className="mt-1 font-display text-[1.85rem] leading-tight font-extrabold sm:text-4xl">{title}</h1>
+          <p className="mt-1.5 text-sm text-cream/60">{subtitle}</p>
         </div>
       </div>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-5">{children}</div>
+    </div>
+  );
+}
+
+function IconBubble({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid h-14 w-14 place-items-center rounded-2xl border border-primary/30 bg-primary/15 text-primary glow-soft">
+      {children}
     </div>
   );
 }
@@ -588,25 +806,32 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function PlanCard({ active, onClick, badge, highlighted, price, name, features, disabled = [] }: {
-  id: Plan; active: boolean; onClick: () => void; badge: string; highlighted?: boolean;
-  price: string; name: string; features: string[]; disabled?: string[];
+function PlanCard({ active, onClick, badge, highlighted, price, name, tagline, features, disabled = [] }: {
+  id: Plan; active: boolean; onClick: () => void; badge?: string; highlighted?: boolean;
+  price: string; name: string; tagline: string; features: string[]; disabled?: string[];
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "relative rounded-2xl border p-5 text-left transition",
+        "relative w-full rounded-2xl border p-5 text-left transition",
         active ? "border-primary bg-primary/10 glow-primary" : "border-border bg-card/60 hover:border-primary/50",
         highlighted && !active && "ring-1 ring-primary/30",
       )}
     >
-      <span className={cn("absolute -top-2.5 left-4 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", highlighted ? "bg-emotion text-foreground" : "bg-primary text-primary-foreground")}>
-        {badge}
-      </span>
-      <p className="text-sm text-muted-foreground">{name}</p>
-      <p className="mt-1 font-display text-3xl font-extrabold">{price}</p>
-      <ul className="mt-4 space-y-1.5 text-sm">
+      {badge && (
+        <span className="absolute -top-2.5 left-4 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+          {badge}
+        </span>
+      )}
+      <div className="flex items-baseline justify-between gap-3">
+        <div>
+          <p className="font-display text-lg font-bold">{name}</p>
+          <p className="text-xs text-muted-foreground">{tagline}</p>
+        </div>
+        <p className="font-display text-2xl font-extrabold text-primary">{price}</p>
+      </div>
+      <ul className="mt-4 grid grid-cols-1 gap-1.5 text-sm sm:grid-cols-2">
         {features.map((f) => (
           <li key={f} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 shrink-0 text-success" /><span>{f}</span></li>
         ))}
