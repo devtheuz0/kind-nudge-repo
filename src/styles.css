@@ -213,3 +213,76 @@
 .animate-heartbeat { animation: heartbeat 1.4s ease-in-out infinite; }
 .animate-flicker { animation: flicker 1.6s ease-in-out infinite; }
 .animate-wobble { animation: wobble 2s ease-in-out infinite; }
+
+@keyframes pop-in {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop-in { animation: pop-in 0.35s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* Background com luz quente no centro */
+@utility bg-warmlight {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent 65%),
+    radial-gradient(ellipse at 50% 100%, color-mix(in oklab, var(--color-navy) 60%, transparent), transparent 60%),
+    var(--color-deep);
+}
+
+/* Botão primário pill com seta animada */
+@utility btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-weight: 700;
+  padding: 0.7rem 1.25rem;
+  border-radius: 9999px;
+  box-shadow: 0 0 28px color-mix(in oklab, var(--color-primary) 40%, transparent);
+  transition: filter .15s, transform .15s, box-shadow .15s;
+  &:hover { filter: brightness(1.08); box-shadow: 0 0 36px color-mix(in oklab, var(--color-primary) 55%, transparent); }
+  &:hover .arrow-r { transform: translateX(3px); }
+  &:disabled { opacity: .5; pointer-events: none; }
+}
+.arrow-r { transition: transform .2s ease; }
+
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  padding: 0.6rem 1.1rem;
+  border-radius: 9999px;
+  transition: background .15s, border-color .15s;
+  &:hover { background: color-mix(in oklab, var(--color-card) 60%, transparent); border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border)); }
+}
+
+/* Card de categoria — visual mais quente, menos artificial */
+@utility cat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.25rem 1rem 1.1rem;
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, white 6%, transparent), color-mix(in oklab, var(--color-card) 80%, transparent));
+  border: 1px solid color-mix(in oklab, white 8%, transparent);
+  text-align: left;
+  overflow: hidden;
+  transition: transform .2s ease, border-color .2s, box-shadow .2s;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: radial-gradient(circle at 80% 0%, color-mix(in oklab, var(--cat-tint, var(--color-primary)) 35%, transparent), transparent 55%);
+    opacity: 0;
+    transition: opacity .25s;
+    pointer-events: none;
+  }
+  &:hover { transform: translateY(-3px); border-color: color-mix(in oklab, var(--cat-tint, var(--color-primary)) 60%, transparent); box-shadow: 0 12px 36px -10px color-mix(in oklab, var(--cat-tint, var(--color-primary)) 35%, transparent); }
+  &:hover::before { opacity: 1; }
+}
