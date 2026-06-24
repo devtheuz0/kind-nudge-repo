@@ -303,14 +303,17 @@ function StepTwo() {
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); onFiles(e.dataTransfer.files); }}
         onClick={() => inputRef.current?.click()}
-        className="glass cursor-pointer rounded-2xl border-dashed border-primary/40 p-5 text-center transition hover:border-primary hover:bg-primary/5"
+        className="flex h-[180px] cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-primary/40 bg-card/30 px-5 text-center transition hover:border-primary hover:bg-primary/5"
       >
-        <Upload className="mx-auto h-6 w-6 text-primary" />
-        <p className="mt-2 text-sm">
-          Arraste ou <span className="font-semibold text-primary underline-offset-4 hover:underline">escolha do dispositivo</span>
+        <Camera className="h-6 w-6 text-foreground/20" />
+        <p className="mt-3 text-sm font-medium">
+          Arraste ou <span className="text-primary underline-offset-4 hover:underline">escolha do dispositivo</span>
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          {media.length} de {max} {plan === "temporary" && "(plano Temporário)"}
+          Fotos, vídeos e áudios · até {max} itens
+        </p>
+        <p className="mt-1 text-[10px] text-muted-foreground/60">
+          {media.length} de {max}{plan === "temporary" && " (plano Temporário)"}
         </p>
         <input ref={inputRef} type="file" multiple accept="image/*,video/*,audio/*" className="hidden" onChange={(e) => onFiles(e.target.files)} />
       </div>
