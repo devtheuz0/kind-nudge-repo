@@ -17,7 +17,6 @@ import {
   Send,
   Sparkles,
   Trash2,
-  Upload,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -71,7 +70,7 @@ function Builder() {
   }, [category, setCategory, currentCategory]);
 
   return (
-    <main className="bg-warmlight relative flex min-h-screen flex-col">
+    <main className="bg-builder relative flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/" preload="intent" className="flex items-center gap-2 font-display text-base font-bold">
@@ -158,26 +157,31 @@ function NextButton({ step, onNext }: { step: number; onNext: () => void }) {
   const handle = () => {
     if (step === 6) {
       setSubmitting(true);
-      setTimeout(() => navigate({ to: "/" }), 1800);
+      setTimeout(() => navigate({ to: "/" }), 2400);
       return;
     }
     onNext();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   return (
-    <button onClick={handle} disabled={submitting} className="btn-gold text-sm">
-      {submitting ? (
-        <>
-          <Loader2 className="h-4 w-4 animate-spin" /> Preparando checkout…
-        </>
-      ) : step === 6 ? (
-        <>Finalizar e pagar <Send className="arrow-r h-4 w-4" /></>
-      ) : step === 5 ? (
-        <>Tudo certo, publicar <ArrowRight className="arrow-r h-4 w-4" /></>
-      ) : (
-        <>Próximo <ArrowRight className="arrow-r h-4 w-4" /></>
+    <>
+      <button onClick={handle} disabled={submitting} className="btn-gold text-sm">
+        {step === 6 ? (
+          <>Finalizar e pagar <Send className="arrow-r h-4 w-4" /></>
+        ) : step === 5 ? (
+          <>Tudo certo, publicar <ArrowRight className="arrow-r h-4 w-4" /></>
+        ) : (
+          <>Próximo <ArrowRight className="arrow-r h-4 w-4" /></>
+        )}
+      </button>
+      {submitting && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/95 backdrop-blur animate-in fade-in duration-300">
+          <Memo mood="heart" size={120} className="animate-heartbeat" />
+          <p className="mt-6 font-display text-2xl font-bold">Preparando sua homenagem…</p>
+          <p className="mt-2 text-sm text-muted-foreground">Estamos guardando cada detalhe com carinho.</p>
+        </div>
       )}
-    </button>
+    </>
   );
 }
 
@@ -217,7 +221,7 @@ function StepOne() {
 
   return (
     <StepShell
-      icon={<Memo mood="wave" size={88} />}
+      icon={<Memo mood="wave" size={40} />}
       eyebrow="Etapa 1"
       title="Para quem é essa história?"
       subtitle="Cada detalhe importa."
@@ -303,14 +307,17 @@ function StepTwo() {
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); onFiles(e.dataTransfer.files); }}
         onClick={() => inputRef.current?.click()}
-        className="glass cursor-pointer rounded-2xl border-dashed border-primary/40 p-5 text-center transition hover:border-primary hover:bg-primary/5"
+        className="flex h-[180px] cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-primary/40 bg-card/30 px-5 text-center transition hover:border-primary hover:bg-primary/5"
       >
-        <Upload className="mx-auto h-6 w-6 text-primary" />
-        <p className="mt-2 text-sm">
-          Arraste ou <span className="font-semibold text-primary underline-offset-4 hover:underline">escolha do dispositivo</span>
+        <Camera className="h-6 w-6 text-foreground/20" />
+        <p className="mt-3 text-sm font-medium">
+          Arraste ou <span className="text-primary underline-offset-4 hover:underline">escolha do dispositivo</span>
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          {media.length} de {max} {plan === "temporary" && "(plano Temporário)"}
+          Fotos, vídeos e áudios · até {max} itens
+        </p>
+        <p className="mt-1 text-[10px] text-muted-foreground/60">
+          {media.length} de {max}{plan === "temporary" && " (plano Temporário)"}
         </p>
         <input ref={inputRef} type="file" multiple accept="image/*,video/*,audio/*" className="hidden" onChange={(e) => onFiles(e.target.files)} />
       </div>
@@ -617,12 +624,12 @@ function StepPreview() {
   };
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
+    <div className="space-y-5 animate-in fade-in duration-300">
       <div className="text-center">
-        <Memo mood="celebrate" size={84} className="mx-auto" />
-        <h1 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">Está pronto?</h1>
+        <Memo mood="celebrate" size={72} className="mx-auto" />
+        <h1 className="mt-2 font-display text-3xl font-extrabold sm:text-4xl">Está pronto?</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Esta é a prévia da homenagem. Confira tudo antes de publicar.
+          Esta é uma prévia com dados de exemplo. A versão final usará suas fotos e mensagem.
         </p>
         <div className="mt-3 flex items-center justify-center gap-2">
           <button onClick={() => setStep(1)} className="btn-ghost text-xs">
@@ -634,12 +641,15 @@ function StepPreview() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-primary/30 glow-soft">
-        <Tribute data={data} compact />
+      <div className="flex justify-center pt-2">
+        <div className="phone-frame">
+          <div className="phone-screen">
+            <div className="h-full overflow-y-auto">
+              <Tribute data={data} compact />
+            </div>
+          </div>
+        </div>
       </div>
-      <p className="text-center text-[11px] text-muted-foreground">
-        Essa é uma prévia com dados de exemplo. O resultado final usará suas fotos e mensagem reais.
-      </p>
 
       {full && (
         <div className="fixed inset-0 z-[70] flex flex-col bg-background animate-in fade-in duration-200">
@@ -746,9 +756,11 @@ function StepPublish() {
             id="temporary"
             active={s.plan === "temporary"}
             onClick={() => s.patch({ plan: "temporary" })}
+            badge="Último minuto"
+            badgeTone="blue"
             price="R$ 19,90"
             name="Temporário"
-            tagline="Ideal para surpresas rápidas"
+            tagline="Ideal para surpresas de última hora"
             features={["Online por 3 dias", "Até 20 fotos", "QR Code", "Música"]}
             disabled={["Sem linha do tempo"]}
           />
@@ -806,8 +818,8 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function PlanCard({ active, onClick, badge, highlighted, price, name, tagline, features, disabled = [] }: {
-  id: Plan; active: boolean; onClick: () => void; badge?: string; highlighted?: boolean;
+function PlanCard({ active, onClick, badge, badgeTone = "gold", highlighted, price, name, tagline, features, disabled = [] }: {
+  id: Plan; active: boolean; onClick: () => void; badge?: string; badgeTone?: "gold" | "blue"; highlighted?: boolean;
   price: string; name: string; tagline: string; features: string[]; disabled?: string[];
 }) {
   return (
@@ -820,7 +832,14 @@ function PlanCard({ active, onClick, badge, highlighted, price, name, tagline, f
       )}
     >
       {badge && (
-        <span className="absolute -top-2.5 left-4 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+        <span
+          className={cn(
+            "absolute -top-2.5 left-4 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+            badgeTone === "blue"
+              ? "bg-[#7aa7d9] text-[#0b1526]"
+              : "bg-primary text-primary-foreground",
+          )}
+        >
           {badge}
         </span>
       )}

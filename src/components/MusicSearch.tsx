@@ -4,30 +4,42 @@ import { searchTracks } from "@/lib/itunes";
 import { useBuilder, type MusicTrack } from "@/lib/builder-store";
 import { cn } from "@/lib/utils";
 
-// Faixas brasileiras e internacionais famosas, organizadas por mood
+// Faixas brasileiras e internacionais famosas
 const FAMOUS: { label: string; query: string; mood: string }[] = [
-  // Amor / casamento
   { label: "Perfect — Ed Sheeran", query: "Ed Sheeran Perfect", mood: "Amor" },
-  { label: "Detalhes — Roberto Carlos", query: "Roberto Carlos Detalhes", mood: "Amor" },
-  { label: "Trem-Bala — Ana Vilela", query: "Ana Vilela Trem-Bala", mood: "Vida" },
   { label: "All of Me — John Legend", query: "John Legend All of Me", mood: "Amor" },
+  { label: "A Thousand Years — Christina Perri", query: "Christina Perri Thousand Years", mood: "Casamento" },
+  { label: "Make You Feel My Love — Adele", query: "Adele Make You Feel My Love", mood: "Amor" },
+  { label: "Thinking Out Loud — Ed Sheeran", query: "Ed Sheeran Thinking Out Loud", mood: "Amor" },
+  { label: "Can't Help Falling in Love — Elvis", query: "Elvis Presley Can't Help Falling in Love", mood: "Amor" },
+  { label: "At Last — Etta James", query: "Etta James At Last", mood: "Casamento" },
+  { label: "You Are the Reason — Calum Scott", query: "Calum Scott You Are the Reason", mood: "Amor" },
+  { label: "Marry Me — Train", query: "Train Marry Me", mood: "Casamento" },
+  { label: "Just the Way You Are — Bruno Mars", query: "Bruno Mars Just The Way You Are", mood: "Amor" },
+  { label: "Detalhes — Roberto Carlos", query: "Roberto Carlos Detalhes", mood: "Amor" },
   { label: "Evidências — Chitãozinho & Xororó", query: "Chitãozinho Xororó Evidências", mood: "Amor" },
-  { label: "A Thousand Years — Christina Perri", query: "Christina Perri A Thousand Years", mood: "Casamento" },
+  { label: "Trem-Bala — Ana Vilela", query: "Ana Vilela Trem-Bala", mood: "Vida" },
+  { label: "Tocando em Frente — Almir Sater", query: "Almir Sater Tocando em Frente", mood: "Vida" },
   { label: "Amor I Love You — Marisa Monte", query: "Marisa Monte Amor I Love You", mood: "Amor" },
   { label: "Eduardo e Mônica — Legião Urbana", query: "Legião Urbana Eduardo e Mônica", mood: "História" },
-  { label: "Tocando em Frente — Almir Sater", query: "Almir Sater Tocando em Frente", mood: "Vida" },
-  // Família / saudade
-  { label: "Like I'm Gonna Lose You — Meghan Trainor", query: "Meghan Trainor Like I'm Gonna Lose You", mood: "Família" },
   { label: "Pais e Filhos — Legião Urbana", query: "Legião Urbana Pais e Filhos", mood: "Família" },
+  { label: "Anunciação — Alceu Valença", query: "Alceu Valença Anunciação", mood: "Brasil" },
+  { label: "Oceano — Djavan", query: "Djavan Oceano", mood: "Sonho" },
+  { label: "Velha Infância — Tribalistas", query: "Tribalistas Velha Infância", mood: "Amizade" },
+  { label: "Wonderful Tonight — Eric Clapton", query: "Eric Clapton Wonderful Tonight", mood: "Amor" },
+  { label: "Stand By Me — Ben E. King", query: "Ben E. King Stand By Me", mood: "Amizade" },
+  { label: "Here Comes The Sun — Beatles", query: "Beatles Here Comes The Sun", mood: "Alegria" },
+  { label: "What a Wonderful World — Armstrong", query: "Louis Armstrong Wonderful World", mood: "Vida" },
   { label: "See You Again — Wiz Khalifa", query: "Wiz Khalifa See You Again", mood: "Saudade" },
   { label: "Tears in Heaven — Eric Clapton", query: "Eric Clapton Tears in Heaven", mood: "Saudade" },
-  { label: "Anunciação — Alceu Valença", query: "Alceu Valença Anunciação", mood: "Brasil" },
-  // Aniversário
-  { label: "Parabéns Pra Você", query: "Parabéns Pra Você", mood: "Aniversário" },
+  { label: "Like I'm Gonna Lose You — Meghan Trainor", query: "Meghan Trainor Like I'm Gonna Lose You", mood: "Família" },
   { label: "Happy — Pharrell Williams", query: "Pharrell Williams Happy", mood: "Festa" },
-  // Romântica
-  { label: "Make You Feel My Love — Adele", query: "Adele Make You Feel My Love", mood: "Amor" },
-  { label: "Oceano — Djavan", query: "Djavan Oceano", mood: "Sonho" },
+  { label: "Parabéns Pra Você", query: "Parabéns Pra Você", mood: "Aniversário" },
+  { label: "Mais que Nada — Sergio Mendes", query: "Sergio Mendes Mais Que Nada", mood: "Festa" },
+  { label: "Garota de Ipanema — Tom Jobim", query: "Tom Jobim Garota de Ipanema", mood: "Bossa" },
+  { label: "Photograph — Ed Sheeran", query: "Ed Sheeran Photograph", mood: "Nostalgia" },
+  { label: "I Will Always Love You — Whitney", query: "Whitney Houston I Will Always Love You", mood: "Amor" },
+  { label: "Sweet Child O' Mine — Guns N' Roses", query: "Guns N Roses Sweet Child O Mine", mood: "Rock" },
 ];
 
 export function MusicSearch() {
