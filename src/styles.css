@@ -45,9 +45,12 @@
   --color-navy: var(--navy);
   --color-deep: var(--deep);
 
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
+  --color-gold: #d4a33b;
+  --color-night: #0b1526;
+  --color-paper: #f5f0e8;
 }
 
 /* ============================================================
