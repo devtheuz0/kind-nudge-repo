@@ -158,26 +158,31 @@ function NextButton({ step, onNext }: { step: number; onNext: () => void }) {
   const handle = () => {
     if (step === 6) {
       setSubmitting(true);
-      setTimeout(() => navigate({ to: "/" }), 1800);
+      setTimeout(() => navigate({ to: "/" }), 2400);
       return;
     }
     onNext();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   return (
-    <button onClick={handle} disabled={submitting} className="btn-gold text-sm">
-      {submitting ? (
-        <>
-          <Loader2 className="h-4 w-4 animate-spin" /> Preparando checkout…
-        </>
-      ) : step === 6 ? (
-        <>Finalizar e pagar <Send className="arrow-r h-4 w-4" /></>
-      ) : step === 5 ? (
-        <>Tudo certo, publicar <ArrowRight className="arrow-r h-4 w-4" /></>
-      ) : (
-        <>Próximo <ArrowRight className="arrow-r h-4 w-4" /></>
+    <>
+      <button onClick={handle} disabled={submitting} className="btn-gold text-sm">
+        {step === 6 ? (
+          <>Finalizar e pagar <Send className="arrow-r h-4 w-4" /></>
+        ) : step === 5 ? (
+          <>Tudo certo, publicar <ArrowRight className="arrow-r h-4 w-4" /></>
+        ) : (
+          <>Próximo <ArrowRight className="arrow-r h-4 w-4" /></>
+        )}
+      </button>
+      {submitting && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/95 backdrop-blur animate-in fade-in duration-300">
+          <Memo mood="heart" size={120} className="animate-heartbeat" />
+          <p className="mt-6 font-display text-2xl font-bold">Preparando sua homenagem…</p>
+          <p className="mt-2 text-sm text-muted-foreground">Estamos guardando cada detalhe com carinho.</p>
+        </div>
       )}
-    </button>
+    </>
   );
 }
 
