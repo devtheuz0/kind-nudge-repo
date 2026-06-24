@@ -819,8 +819,8 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function PlanCard({ active, onClick, badge, highlighted, price, name, tagline, features, disabled = [] }: {
-  id: Plan; active: boolean; onClick: () => void; badge?: string; highlighted?: boolean;
+function PlanCard({ active, onClick, badge, badgeTone = "gold", highlighted, price, name, tagline, features, disabled = [] }: {
+  id: Plan; active: boolean; onClick: () => void; badge?: string; badgeTone?: "gold" | "blue"; highlighted?: boolean;
   price: string; name: string; tagline: string; features: string[]; disabled?: string[];
 }) {
   return (
@@ -833,7 +833,14 @@ function PlanCard({ active, onClick, badge, highlighted, price, name, tagline, f
       )}
     >
       {badge && (
-        <span className="absolute -top-2.5 left-4 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+        <span
+          className={cn(
+            "absolute -top-2.5 left-4 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+            badgeTone === "blue"
+              ? "bg-[#7aa7d9] text-[#0b1526]"
+              : "bg-primary text-primary-foreground",
+          )}
+        >
           {badge}
         </span>
       )}
