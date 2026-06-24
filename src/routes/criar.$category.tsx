@@ -17,7 +17,6 @@ import {
   Send,
   Sparkles,
   Trash2,
-  Upload,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
