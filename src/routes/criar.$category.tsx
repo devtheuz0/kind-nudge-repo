@@ -217,7 +217,7 @@ function StepOne() {
 
   return (
     <StepShell
-      icon={<Memo mood="wave" size={88} />}
+      icon={<Memo mood="wave" size={40} />}
       eyebrow="Etapa 1"
       title="Para quem é essa história?"
       subtitle="Cada detalhe importa."
