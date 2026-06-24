@@ -620,12 +620,12 @@ function StepPreview() {
   };
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
+    <div className="space-y-5 animate-in fade-in duration-300">
       <div className="text-center">
-        <Memo mood="celebrate" size={84} className="mx-auto" />
-        <h1 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">Está pronto?</h1>
+        <Memo mood="celebrate" size={72} className="mx-auto" />
+        <h1 className="mt-2 font-display text-3xl font-extrabold sm:text-4xl">Está pronto?</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Esta é a prévia da homenagem. Confira tudo antes de publicar.
+          Esta é uma prévia com dados de exemplo. A versão final usará suas fotos e mensagem.
         </p>
         <div className="mt-3 flex items-center justify-center gap-2">
           <button onClick={() => setStep(1)} className="btn-ghost text-xs">
@@ -637,12 +637,15 @@ function StepPreview() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-primary/30 glow-soft">
-        <Tribute data={data} compact />
+      <div className="flex justify-center pt-2">
+        <div className="phone-frame">
+          <div className="phone-screen">
+            <div className="h-full overflow-y-auto">
+              <Tribute data={data} compact />
+            </div>
+          </div>
+        </div>
       </div>
-      <p className="text-center text-[11px] text-muted-foreground">
-        Essa é uma prévia com dados de exemplo. O resultado final usará suas fotos e mensagem reais.
-      </p>
 
       {full && (
         <div className="fixed inset-0 z-[70] flex flex-col bg-background animate-in fade-in duration-200">
