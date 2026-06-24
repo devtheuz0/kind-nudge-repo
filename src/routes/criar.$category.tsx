@@ -757,9 +757,11 @@ function StepPublish() {
             id="temporary"
             active={s.plan === "temporary"}
             onClick={() => s.patch({ plan: "temporary" })}
+            badge="Último minuto"
+            badgeTone="blue"
             price="R$ 19,90"
             name="Temporário"
-            tagline="Ideal para surpresas rápidas"
+            tagline="Ideal para surpresas de última hora"
             features={["Online por 3 dias", "Até 20 fotos", "QR Code", "Música"]}
             disabled={["Sem linha do tempo"]}
           />
