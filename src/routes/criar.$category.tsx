@@ -71,7 +71,7 @@ function Builder() {
   }, [category, setCategory, currentCategory]);
 
   return (
-    <main className="bg-warmlight relative flex min-h-screen flex-col">
+    <main className="bg-builder relative flex min-h-screen flex-col">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/" preload="intent" className="flex items-center gap-2 font-display text-base font-bold">
