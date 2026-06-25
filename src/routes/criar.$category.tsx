@@ -10,12 +10,15 @@ import {
   Eye,
   Film,
   Image as ImageIcon,
+  LayoutGrid,
   Loader2,
+  LogIn,
   Mic2,
+  Music2,
   Palette,
   Plus,
+  RefreshCw,
   Send,
-  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
@@ -77,9 +80,14 @@ function Builder() {
             <Memo mood="avatar" size={26} animate={false} /> Memora
           </Link>
           <SaveIndicator saving={saving} />
-          <Link to="/criar" preload="intent" className="rounded-md p-2 text-muted-foreground hover:bg-card hover:text-foreground" aria-label="Sair">
-            <X className="h-4 w-4" />
-          </Link>
+          <div className="flex items-center gap-1">
+            <Link to="/entrar" preload="intent" className="hidden items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-card hover:text-foreground sm:inline-flex">
+              <LogIn className="h-3.5 w-3.5" /> Meus rascunhos
+            </Link>
+            <Link to="/criar" preload="intent" className="rounded-md p-2 text-muted-foreground hover:bg-card hover:text-foreground" aria-label="Sair">
+              <X className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="mx-auto max-w-5xl px-4 pb-3 sm:px-6">
@@ -157,7 +165,7 @@ function NextButton({ step, onNext }: { step: number; onNext: () => void }) {
   const handle = () => {
     if (step === 6) {
       setSubmitting(true);
-      setTimeout(() => navigate({ to: "/" }), 2400);
+      setTimeout(() => navigate({ to: "/checkout" }), 1400);
       return;
     }
     onNext();
@@ -258,8 +266,8 @@ function StepOne() {
           disabled={genLoading}
           className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition hover:underline disabled:opacity-50"
         >
-          {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-          Gerar frase com IA
+          {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+          Sugerir uma frase
         </button>
       </Field>
     </StepShell>
