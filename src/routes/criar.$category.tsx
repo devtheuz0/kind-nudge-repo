@@ -685,7 +685,7 @@ function StepPreview() {
         <div className="phone-frame">
           <div className="phone-screen">
             <div className="h-full overflow-y-auto">
-              <Tribute data={data} compact />
+              <Tribute data={data} compact locked />
             </div>
           </div>
         </div>
@@ -700,7 +700,7 @@ function StepPreview() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <Tribute data={data} />
+            <Tribute data={data} locked />
           </div>
         </div>
       )}
