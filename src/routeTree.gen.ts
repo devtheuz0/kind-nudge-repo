@@ -9,10 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CriarIndexRouteImport } from './routes/criar.index'
 import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
 
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +43,64 @@ const CriarCategoryRoute = CriarCategoryRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/entrar': typeof EntrarRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/entrar': typeof EntrarRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar': typeof CriarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/entrar': typeof EntrarRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/criar/$category' | '/criar/'
+  fullPaths: '/' | '/checkout' | '/entrar' | '/criar/$category' | '/criar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/criar/$category' | '/criar'
-  id: '__root__' | '/' | '/criar/$category' | '/criar/'
+  to: '/' | '/checkout' | '/entrar' | '/criar/$category' | '/criar'
+  id:
+    | '__root__'
+    | '/'
+    | '/checkout'
+    | '/entrar'
+    | '/criar/$category'
+    | '/criar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckoutRoute: typeof CheckoutRoute
+  EntrarRoute: typeof EntrarRoute
   CriarCategoryRoute: typeof CriarCategoryRoute
   CriarIndexRoute: typeof CriarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +127,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckoutRoute: CheckoutRoute,
+  EntrarRoute: EntrarRoute,
   CriarCategoryRoute: CriarCategoryRoute,
   CriarIndexRoute: CriarIndexRoute,
 }
