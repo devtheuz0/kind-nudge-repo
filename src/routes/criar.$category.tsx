@@ -10,12 +10,14 @@ import {
   Eye,
   Film,
   Image as ImageIcon,
+  LayoutGrid,
   Loader2,
+  LogIn,
   Mic2,
   Palette,
   Plus,
+  RefreshCw,
   Send,
-  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
@@ -77,9 +79,14 @@ function Builder() {
             <Memo mood="avatar" size={26} animate={false} /> Memora
           </Link>
           <SaveIndicator saving={saving} />
-          <Link to="/criar" preload="intent" className="rounded-md p-2 text-muted-foreground hover:bg-card hover:text-foreground" aria-label="Sair">
-            <X className="h-4 w-4" />
-          </Link>
+          <div className="flex items-center gap-1">
+            <Link to="/entrar" preload="intent" className="hidden items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-card hover:text-foreground sm:inline-flex">
+              <LogIn className="h-3.5 w-3.5" /> Meus rascunhos
+            </Link>
+            <Link to="/criar" preload="intent" className="rounded-md p-2 text-muted-foreground hover:bg-card hover:text-foreground" aria-label="Sair">
+              <X className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="mx-auto max-w-5xl px-4 pb-3 sm:px-6">
@@ -157,7 +164,7 @@ function NextButton({ step, onNext }: { step: number; onNext: () => void }) {
   const handle = () => {
     if (step === 6) {
       setSubmitting(true);
-      setTimeout(() => navigate({ to: "/" }), 2400);
+      setTimeout(() => navigate({ to: "/checkout" }), 1400);
       return;
     }
     onNext();
@@ -258,8 +265,8 @@ function StepOne() {
           disabled={genLoading}
           className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition hover:underline disabled:opacity-50"
         >
-          {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-          Gerar frase com IA
+          {genLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+          Sugerir uma frase
         </button>
       </Field>
     </StepShell>
@@ -512,10 +519,12 @@ function StepThree() {
 function StepFour() {
   const s = useBuilder();
   const [genLoading, setGenLoading] = useState(false);
+  const firstPhoto = s.media.find((m) => m.type === "photo");
+  const cat = CATEGORIES.find((c) => c.id === s.category);
 
   const generateStory = async () => {
     setGenLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
+    await new Promise((r) => setTimeout(r, 700));
     const story = `Tem histórias que começam sem aviso. A nossa começou ${
       s.startDate ? `em ${new Date(s.startDate).toLocaleDateString("pt-BR")}` : "num desses dias comuns"
     } e, desde então, ${s.toName || "você"} virou capítulo de tudo.\n\nCada foto aqui, cada palavra, cada música, é um pedacinho da gente.\n\nObrigado por existir. — ${s.fromName || "com amor"}`;
@@ -528,11 +537,14 @@ function StepFour() {
       icon={<IconBubble><Palette className="h-6 w-6" /></IconBubble>}
       eyebrow="Etapa 4"
       title="Visual & música"
-      subtitle="Escolha o clima e a trilha sonora."
+      subtitle="Escolha o clima e a trilha — veja a prévia ao vivo a qualquer momento."
     >
       <div>
-        <p className="mb-3 text-sm font-semibold">Template</p>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="flex items-center gap-1.5 text-sm font-semibold"><LayoutGrid className="h-3.5 w-3.5 text-primary" /> Template visual</p>
+          <span className="text-[10px] text-muted-foreground">{TEMPLATES.length} opções</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           {TEMPLATES.map((t) => {
             const active = s.templateId === t.id;
             return (
@@ -540,32 +552,53 @@ function StepFour() {
                 key={t.id}
                 onClick={() => s.patch({ templateId: t.id as TemplateId })}
                 className={cn(
-                  "group relative overflow-hidden rounded-2xl border bg-card/60 text-left transition",
+                  "group relative overflow-hidden rounded-2xl border bg-card/60 text-left transition-all duration-300",
                   active
-                    ? "border-primary shadow-[0_0_0_2px_var(--color-primary),0_8px_32px_-6px_color-mix(in_oklab,var(--color-primary)_55%,transparent)]"
+                    ? "border-primary shadow-[0_0_0_2px_var(--color-primary),0_12px_40px_-8px_color-mix(in_oklab,var(--color-primary)_55%,transparent)] -translate-y-0.5"
                     : "border-border hover:border-primary/50 hover:-translate-y-0.5",
                 )}
+                style={{ ["--accent" as string]: t.accent }}
               >
-                {/* tag de mood no canto superior direito */}
-                <span className="absolute right-2 top-2 z-10 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-semibold text-primary backdrop-blur">
-                  {t.mood}
-                </span>
-                <div className="relative h-28 overflow-hidden bg-night">
-                  <div className="transition-transform duration-700 group-hover:scale-110">
+                {/* Mini-tribute preview */}
+                <div className="relative h-44 overflow-hidden" style={{ background: "linear-gradient(180deg, #0b1526 0%, #15263d 100%)" }}>
+                  <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
                     <TemplateBackdrop template={t.id} />
                   </div>
-                </div>
-                <div className="flex items-center justify-between gap-3 px-3 py-2.5">
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold">{t.name}</p>
-                    <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{t.desc}</p>
+                  {/* Foto do usuário sobreposta */}
+                  {firstPhoto && (
+                    <img
+                      src={firstPhoto.url}
+                      alt=""
+                      className="absolute right-2 top-2 h-16 w-12 rounded-md object-cover shadow-xl ring-1 ring-white/20 transition-transform duration-500 group-hover:rotate-3 group-hover:scale-105"
+                      style={{ transform: "rotate(-6deg)" }}
+                    />
+                  )}
+                  {/* Mock conteúdo (nome + frase) */}
+                  <div className="absolute inset-x-0 bottom-0 p-3 text-center">
+                    <p className="font-display text-[15px] font-bold leading-tight text-[#f5f0e8]" style={{ textShadow: "0 2px 8px rgba(0,0,0,.6)" }}>
+                      {s.toName || cat?.label || "Para você"}
+                    </p>
+                    <p className="mt-0.5 line-clamp-1 text-[9px] tracking-[0.2em] text-[#d4a33b]">{t.mood.toUpperCase()}</p>
                   </div>
-                  {active && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                  {active && (
+                    <span className="absolute left-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-primary text-primary-foreground animate-pop-in">
+                      <Check className="h-3.5 w-3.5" />
+                    </span>
+                  )}
+                </div>
+                <div className="px-3 py-2.5">
+                  <p className="text-sm font-bold">{t.name}</p>
+                  <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{t.desc}</p>
                 </div>
               </button>
             );
           })}
         </div>
+        {!firstPhoto && (
+          <p className="mt-3 rounded-lg border border-dashed border-border bg-card/30 px-3 py-2 text-[11px] text-muted-foreground">
+            💡 Adicione fotos na Etapa 2 — elas aparecem dentro do template para você ver como fica.
+          </p>
+        )}
       </div>
 
       <Field label="Música de fundo">
@@ -577,7 +610,7 @@ function StepFour() {
           value={s.mainMessage}
           onChange={(e) => s.patch({ mainMessage: e.target.value })}
           rows={7}
-          placeholder={`Desde o dia que nos conhecemos, cada momento ao seu lado\nse tornou uma lembrança que quero guardar para sempre…\n\n(escreva com o coração — ou peça pra IA começar)`}
+          placeholder={`Desde o dia que nos conhecemos, cada momento ao seu lado\nse tornou uma lembrança que quero guardar para sempre…`}
           className="memora-input resize-none placeholder:italic placeholder:text-muted-foreground/40"
         />
         <button
@@ -585,10 +618,16 @@ function StepFour() {
           disabled={genLoading}
           className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition hover:underline disabled:opacity-50"
         >
-          {genLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-          Gerar história com IA
+          {genLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+          Sugerir início de história
         </button>
       </Field>
+
+      <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-xs text-cream/80">
+        <p className="flex items-center gap-1.5 font-semibold text-primary">
+          <Eye className="h-3.5 w-3.5" /> Use o botão "Prévia" flutuante para abrir a homenagem em tempo real.
+        </p>
+      </div>
     </StepShell>
   );
 }
@@ -645,7 +684,7 @@ function StepPreview() {
         <div className="phone-frame">
           <div className="phone-screen">
             <div className="h-full overflow-y-auto">
-              <Tribute data={data} compact />
+              <Tribute data={data} compact locked />
             </div>
           </div>
         </div>
@@ -660,7 +699,7 @@ function StepPreview() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <Tribute data={data} />
+            <Tribute data={data} locked />
           </div>
         </div>
       )}

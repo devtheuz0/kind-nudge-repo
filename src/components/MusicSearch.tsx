@@ -1,4 +1,4 @@
-import { Loader2, Music2, Pause, Play, Search, Sparkles, X } from "lucide-react";
+import { Flame, Loader2, Music2, Pause, Play, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { searchTracks } from "@/lib/itunes";
 import { useBuilder, type MusicTrack } from "@/lib/builder-store";
@@ -77,19 +77,43 @@ export function MusicSearch() {
   };
 
   if (music) {
+    const isPlaying = playingId === music.id;
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-primary/40 bg-primary/10 p-3">
-        <img src={music.artwork} alt="" className="h-12 w-12 rounded-md" />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">{music.title}</p>
-          <p className="truncate text-xs text-muted-foreground">{music.artist}</p>
+      <div
+        className="relative overflow-hidden rounded-2xl p-4"
+        style={{
+          background: "linear-gradient(135deg, #1db95430 0%, #15263d 60%)",
+          border: "1px solid rgba(29,185,84,0.35)",
+          boxShadow: "0 12px 40px -10px rgba(29,185,84,0.25)",
+        }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="relative shrink-0">
+            <img src={music.artwork} alt="" className={cn("h-20 w-20 rounded-lg shadow-xl transition-transform", isPlaying && "animate-[bob_3s_ease-in-out_infinite]")} />
+            {isPlaying && <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-[#1db954] text-black"><Music2 className="h-3 w-3 animate-pulse" /></span>}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold tracking-[0.2em] text-[#1db954]">TOCANDO NA HOMENAGEM</p>
+            <p className="mt-0.5 truncate font-display text-lg font-bold">{music.title}</p>
+            <p className="truncate text-xs text-muted-foreground">{music.artist}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <button onClick={() => toggle(music)} className="grid h-9 w-9 place-items-center rounded-full bg-[#1db954] text-black transition hover:scale-105" aria-label="Tocar prévia">
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-[1px]" />}
+              </button>
+              <button onClick={() => { audioRef.current?.pause(); setPlayingId(null); setMusic(null); }} className="text-xs text-muted-foreground hover:text-foreground">
+                Trocar música
+              </button>
+            </div>
+          </div>
         </div>
-        <button onClick={() => toggle(music)} className="rounded-full bg-primary p-2 text-primary-foreground" aria-label="Tocar prévia">
-          {playingId === music.id ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-        </button>
-        <button onClick={() => { audioRef.current?.pause(); setPlayingId(null); setMusic(null); }} className="rounded-full p-2 text-muted-foreground hover:bg-card" aria-label="Remover música">
-          <X className="h-4 w-4" />
-        </button>
+        {/* equalizer bars */}
+        {isPlaying && (
+          <div className="pointer-events-none absolute bottom-0 right-4 flex items-end gap-0.5 opacity-60">
+            {[0,1,2,3].map((i) => (
+              <span key={i} className="block w-1 rounded-t bg-[#1db954]" style={{ height: 8 + (i%2)*8, animation: `bob ${0.6 + i*0.2}s ease-in-out infinite` }} />
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -110,7 +134,7 @@ export function MusicSearch() {
       {!q && (
         <div>
           <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Sparkles className="h-3 w-3 text-primary" /> Mais escolhidas
+            <Flame className="h-3 w-3 text-primary" /> Mais escolhidas
           </p>
           <div className="flex flex-wrap gap-1.5">
             {FAMOUS.map((f) => (
