@@ -30,7 +30,7 @@ export type TributeData = {
   music: MusicTrack | null;
 };
 
-export function Tribute({ data, compact = false }: { data: TributeData; compact?: boolean }) {
+export function Tribute({ data, compact = false, locked = false }: { data: TributeData; compact?: boolean; locked?: boolean }) {
   const template = TEMPLATES.find((t) => t.id === data.templateId) ?? TEMPLATES[0];
   const cat = CATEGORIES.find((c) => c.id === data.category);
   const eyebrow = cat ? `${cat.emoji} ${cat.label.toUpperCase()}` : "♥ PARA QUEM AMO";
@@ -44,6 +44,7 @@ export function Tribute({ data, compact = false }: { data: TributeData; compact?
       }}
     >
       <TemplateBackdrop template={data.templateId} />
+      {locked && <PreviewWatermark />}
 
       {/* ============== SEÇÃO 1 — COVER ============== */}
       <section
