@@ -132,6 +132,36 @@ export function Tribute({ data, compact = false, locked = false }: { data: Tribu
   );
 }
 
+function PreviewWatermark() {
+  return (
+    <>
+      <div className="pointer-events-none fixed inset-0 z-[45] overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(-30deg, transparent 0 80px, rgba(245,240,232,0.4) 80px 82px), repeating-linear-gradient(-30deg, transparent 0 220px, rgba(212,163,59,0.25) 220px 320px)",
+          }}
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-12">
+          {[0, 1, 2, 3].map((i) => (
+            <span
+              key={i}
+              className="font-display text-[44px] font-black uppercase tracking-[0.4em] text-[#d4a33b]/15 sm:text-[72px]"
+              style={{ transform: "rotate(-22deg)" }}
+            >
+              PRÉVIA · MEMORA · PRÉVIA
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="pointer-events-none fixed left-1/2 top-3 z-[46] -translate-x-1/2 rounded-full border border-primary/50 bg-background/85 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary backdrop-blur">
+        Prévia bloqueada — publique para liberar
+      </div>
+    </>
+  );
+}
+
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4 text-center">
