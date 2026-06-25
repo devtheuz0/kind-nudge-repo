@@ -14,7 +14,6 @@ import {
   Loader2,
   LogIn,
   Mic2,
-  Music2,
   Palette,
   Plus,
   RefreshCw,
