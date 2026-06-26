@@ -351,3 +351,95 @@
   overflow: hidden;
   background: #0b1526;
 }
+
+/* ============================================================
+   Extra keyframes for templates & gallery interactions
+   ============================================================ */
+@keyframes drift {
+  0%   { transform: translate3d(0,0,0) rotate(var(--r, 0deg)); }
+  50%  { transform: translate3d(8px,-10px,0) rotate(calc(var(--r, 0deg) + 2deg)); }
+  100% { transform: translate3d(0,0,0) rotate(var(--r, 0deg)); }
+}
+.animate-drift { animation: drift 7s ease-in-out infinite; }
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 6s linear infinite; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--color-primary) 40%, transparent) 50%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+
+@keyframes swipe-hint {
+  0%, 100% { transform: translateX(0); opacity: 0.8; }
+  50%      { transform: translateX(14px); opacity: 1; }
+}
+.animate-swipe-hint { animation: swipe-hint 1.8s ease-in-out infinite; }
+
+@keyframes film-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-film { animation: film-scroll 30s linear infinite; }
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(-10vh) rotate(0); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+
+/* Polaroid card frame */
+@utility polaroid {
+  background: #fbf6ec;
+  padding: 10px 10px 36px;
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.04),
+    0 14px 30px -10px rgba(0,0,0,.55),
+    0 2px 6px rgba(0,0,0,.25);
+  border-radius: 4px;
+  position: relative;
+}
+
+/* Spotify-like dark pill */
+@utility pill-spotify {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #1db954;
+  color: #061a0a;
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 6px 20px -6px rgba(29,185,84,.55);
+}
+
+/* Vinyl record visual */
+@utility vinyl {
+  position: relative;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at center, #1a1a1a 0 18%, transparent 18.5%),
+    repeating-radial-gradient(circle at center, #0a0a0a 0 2px, #161616 3px, #0a0a0a 4px),
+    #000;
+}
+@utility vinyl::after {
+  content: "";
+  position: absolute; inset: 42%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--color-primary), color-mix(in oklab, var(--color-primary) 50%, #000));
+  box-shadow: 0 0 0 2px rgba(255,255,255,.08);
+}
+
+/* Hide Lovable badge in deployed app */
+#lovable-badge { display: none !important; }
+

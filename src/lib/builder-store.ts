@@ -58,7 +58,12 @@ export type TemplateId =
   | "polaroid"
   | "patinhas"
   | "vela"
-  | "bodas";
+  | "bodas"
+  | "vinil"
+  | "cinema"
+  | "cartas"
+  | "festa"
+  | "mar";
 
 export const TEMPLATES: {
   id: TemplateId;
@@ -67,14 +72,20 @@ export const TEMPLATES: {
   mood: string; // e.g. "Romântico"
   accent: string; // hex for theming
 }[] = [
-  { id: "coracao",     name: "Coração Pulsante", desc: "Corações flutuantes e pulsação ao ritmo do amor",        mood: "Amor",        accent: "#F43F5E" },
-  { id: "jardim",      name: "Jardim de Memórias", desc: "Pétalas caem suavemente sobre suas lembranças",         mood: "Carinho",     accent: "#F5C46A" },
-  { id: "constelacao", name: "Constelação",       desc: "Estrelas se conectam formando sua história",              mood: "Eternidade",  accent: "#E6EBFF" },
-  { id: "polaroid",    name: "Polaroids",         desc: "Fotos antigas caindo, espalhadas com carinho",            mood: "Nostalgia",   accent: "#FFF4E1" },
-  { id: "patinhas",    name: "Patinhas",          desc: "Pegadas aparecem no caminho do seu pet",                  mood: "Companhia",   accent: "#D4A574" },
-  { id: "vela",        name: "Vela Eterna",       desc: "Uma chama suave tremula em memória",                      mood: "Saudade",     accent: "#F5C46A" },
-  { id: "bodas",       name: "Bodas de Ouro",     desc: "Partículas douradas celebram a vida em comum",            mood: "Celebração",  accent: "#F5C46A" },
+  { id: "coracao",     name: "Coração Pulsante",   desc: "Corações flutuantes pulsam ao ritmo do amor",          mood: "Amor",        accent: "#F43F5E" },
+  { id: "jardim",      name: "Jardim de Memórias", desc: "Pétalas caem suavemente sobre suas lembranças",        mood: "Carinho",     accent: "#F5C46A" },
+  { id: "constelacao", name: "Constelação",        desc: "Estrelas se conectam formando sua história",           mood: "Eternidade",  accent: "#E6EBFF" },
+  { id: "polaroid",    name: "Mural Polaroid",     desc: "Suas fotos reais espalhadas como um mural de quarto",  mood: "Nostalgia",   accent: "#FFF4E1" },
+  { id: "patinhas",    name: "Patinhas",           desc: "Pegadas no caminho do seu melhor amigo de 4 patas",    mood: "Companhia",   accent: "#D4A574" },
+  { id: "vela",        name: "Vela Eterna",        desc: "Uma chama suave tremula em memória",                   mood: "Saudade",     accent: "#F5C46A" },
+  { id: "bodas",       name: "Bodas de Ouro",      desc: "Partículas douradas celebram a vida em comum",         mood: "Celebração",  accent: "#F5C46A" },
+  { id: "vinil",       name: "Vinil Apaixonado",   desc: "Um disco gira lento com a trilha de vocês",            mood: "Romance",     accent: "#1db954" },
+  { id: "cinema",      name: "Cinema da Vida",     desc: "Suas fotos passam como uma fita de filme antiga",      mood: "Cinematográfico", accent: "#E6EBFF" },
+  { id: "cartas",      name: "Cartas de Amor",     desc: "Cartas e envelopes voam sobre um pergaminho",          mood: "Romântico",   accent: "#F5C46A" },
+  { id: "festa",       name: "Festa & Confete",    desc: "Confetes coloridos caem em câmera lenta",              mood: "Aniversário", accent: "#F43F5E" },
+  { id: "mar",         name: "Mar de Lembranças",  desc: "Ondas suaves e brilhos quentes do pôr-do-sol",         mood: "Sereno",      accent: "#7DD3FC" },
 ];
+
 
 export type Plan = "temporary" | "eternal";
 
