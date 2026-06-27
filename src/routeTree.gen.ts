@@ -14,6 +14,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CriarIndexRouteImport } from './routes/criar.index'
 import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
@@ -40,46 +41,67 @@ const CriarCategoryRoute = CriarCategoryRouteImport.update({
   path: '/criar/$category',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/return',
+  path: '/return',
+  getParentRoute: () => CheckoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
+  '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
+  '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar': typeof CriarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
+  '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/checkout' | '/entrar' | '/criar/$category' | '/criar/'
+  fullPaths:
+    | '/'
+    | '/checkout'
+    | '/entrar'
+    | '/checkout/return'
+    | '/criar/$category'
+    | '/criar/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/checkout' | '/entrar' | '/criar/$category' | '/criar'
+  to:
+    | '/'
+    | '/checkout'
+    | '/entrar'
+    | '/checkout/return'
+    | '/criar/$category'
+    | '/criar'
   id:
     | '__root__'
     | '/'
     | '/checkout'
     | '/entrar'
+    | '/checkout/return'
     | '/criar/$category'
     | '/criar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CheckoutRoute: typeof CheckoutRoute
+  CheckoutRoute: typeof CheckoutRouteWithChildren
   EntrarRoute: typeof EntrarRoute
   CriarCategoryRoute: typeof CriarCategoryRoute
   CriarIndexRoute: typeof CriarIndexRoute
@@ -122,12 +144,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CriarCategoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof CheckoutRoute
+    }
   }
 }
 
+interface CheckoutRouteChildren {
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
+}
+
+const CheckoutRouteChildren: CheckoutRouteChildren = {
+  CheckoutReturnRoute: CheckoutReturnRoute,
+}
+
+const CheckoutRouteWithChildren = CheckoutRoute._addFileChildren(
+  CheckoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CheckoutRoute: CheckoutRoute,
+  CheckoutRoute: CheckoutRouteWithChildren,
   EntrarRoute: EntrarRoute,
   CriarCategoryRoute: CriarCategoryRoute,
   CriarIndexRoute: CriarIndexRoute,
