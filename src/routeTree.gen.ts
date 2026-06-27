@@ -13,6 +13,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CriarIndexRouteImport } from './routes/criar.index'
+import { Route as ParaSlugRouteImport } from './routes/para.$slug'
 import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 
@@ -36,6 +37,11 @@ const CriarIndexRoute = CriarIndexRouteImport.update({
   path: '/criar/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParaSlugRoute = ParaSlugRouteImport.update({
+  id: '/para/$slug',
+  path: '/para/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CriarCategoryRoute = CriarCategoryRouteImport.update({
   id: '/criar/$category',
   path: '/criar/$category',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/entrar': typeof EntrarRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
+  '/para/$slug': typeof ParaSlugRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
+  '/para/$slug': typeof ParaSlugRoute
   '/criar': typeof CriarIndexRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/entrar': typeof EntrarRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
+  '/para/$slug': typeof ParaSlugRoute
   '/criar/': typeof CriarIndexRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/checkout/return'
     | '/criar/$category'
+    | '/para/$slug'
     | '/criar/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/checkout/return'
     | '/criar/$category'
+    | '/para/$slug'
     | '/criar'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/checkout/return'
     | '/criar/$category'
+    | '/para/$slug'
     | '/criar/'
   fileRoutesById: FileRoutesById
 }
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRouteWithChildren
   EntrarRoute: typeof EntrarRoute
   CriarCategoryRoute: typeof CriarCategoryRoute
+  ParaSlugRoute: typeof ParaSlugRoute
   CriarIndexRoute: typeof CriarIndexRoute
 }
 
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/criar'
       fullPath: '/criar/'
       preLoaderRoute: typeof CriarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/para/$slug': {
+      id: '/para/$slug'
+      path: '/para/$slug'
+      fullPath: '/para/$slug'
+      preLoaderRoute: typeof ParaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/criar/$category': {
@@ -171,6 +191,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRouteWithChildren,
   EntrarRoute: EntrarRoute,
   CriarCategoryRoute: CriarCategoryRoute,
+  ParaSlugRoute: ParaSlugRoute,
   CriarIndexRoute: CriarIndexRoute,
 }
 export const routeTree = rootRouteImport
