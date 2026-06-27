@@ -432,7 +432,7 @@
     repeating-radial-gradient(circle at center, #0a0a0a 0 2px, #161616 3px, #0a0a0a 4px),
     #000;
 }
-@utility vinyl::after {
+.vinyl::after {
   content: "";
   position: absolute; inset: 42%;
   border-radius: 9999px;
