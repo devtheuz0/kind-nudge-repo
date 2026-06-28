@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check, Lock, ShieldCheck } from "lucide-react";
 import { useBuilder } from "@/lib/builder-store";
+import { saveDraft } from "@/lib/homenagens";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useState } from "react";
@@ -15,6 +16,7 @@ function Checkout() {
   const s = useBuilder();
   const [email, setEmail] = useState("");
   const [starting, setStarting] = useState(false);
+
 
   const priceId = s.plan === "eternal" ? "memora_eterno_onetime" : "memora_temporario_onetime";
   const price = s.plan === "eternal" ? "R$ 29,90" : "R$ 19,90";
