@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check, Lock, ShieldCheck } from "lucide-react";
 import { useBuilder } from "@/lib/builder-store";
+import { saveDraft } from "@/lib/homenagens";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useState } from "react";
@@ -15,6 +16,7 @@ function Checkout() {
   const s = useBuilder();
   const [email, setEmail] = useState("");
   const [starting, setStarting] = useState(false);
+
 
   const priceId = s.plan === "eternal" ? "memora_eterno_onetime" : "memora_temporario_onetime";
   const price = s.plan === "eternal" ? "R$ 29,90" : "R$ 19,90";
@@ -59,12 +61,30 @@ function Checkout() {
                 />
               </div>
               <button
-                onClick={() => canStart && setStarting(true)}
+                onClick={() => {
+                  if (!canStart) return;
+                  // Persist draft snapshot so the public link + Minhas Homenagens
+                  // can render the tribute after payment, even on reload.
+                  saveDraft(slug, {
+                    category: s.category,
+                    fromName: s.fromName,
+                    toName: s.toName,
+                    startDate: s.startDate,
+                    openingPhrase: s.openingPhrase,
+                    mainMessage: s.mainMessage,
+                    media: s.media,
+                    timeline: s.timeline,
+                    templateId: s.templateId,
+                    music: s.music,
+                  });
+                  setStarting(true);
+                }}
                 disabled={!canStart}
                 className="btn-gold w-full justify-center text-sm"
               >
                 Pagar {price} com Stripe <Lock className="h-4 w-4" />
               </button>
+
               <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="h-3 w-3" /> Sem reembolso após pagamento (produto digital).
               </p>
