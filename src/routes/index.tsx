@@ -37,10 +37,12 @@ function Landing() {
           <a href="#como-funciona" className="hover:text-cream">Como funciona</a>
           <a href="#precos" className="hover:text-cream">Preços</a>
           <a href="#faq" className="hover:text-cream">Perguntas</a>
+          <Link to="/minhas" className="hover:text-cream">Minhas homenagens</Link>
         </nav>
         <Link to="/criar" preload="intent" className="btn-gold text-sm">
           Começar <ArrowRight className="arrow-r h-4 w-4" />
         </Link>
+
       </header>
 
       {/* hero */}

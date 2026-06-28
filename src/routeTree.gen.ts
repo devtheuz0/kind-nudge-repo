@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MinhasRouteImport } from './routes/minhas'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as ParaSlugRouteImport } from './routes/para.$slug'
 import { Route as CriarCategoryRouteImport } from './routes/criar.$category'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 
+const MinhasRoute = MinhasRouteImport.update({
+  id: '/minhas',
+  path: '/minhas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/minhas': typeof MinhasRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/para/$slug': typeof ParaSlugRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/minhas': typeof MinhasRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/para/$slug': typeof ParaSlugRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/minhas': typeof MinhasRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/criar/$category': typeof CriarCategoryRoute
   '/para/$slug': typeof ParaSlugRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/entrar'
+    | '/minhas'
     | '/checkout/return'
     | '/criar/$category'
     | '/para/$slug'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/entrar'
+    | '/minhas'
     | '/checkout/return'
     | '/criar/$category'
     | '/para/$slug'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkout'
     | '/entrar'
+    | '/minhas'
     | '/checkout/return'
     | '/criar/$category'
     | '/para/$slug'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRouteWithChildren
   EntrarRoute: typeof EntrarRoute
+  MinhasRoute: typeof MinhasRoute
   CriarCategoryRoute: typeof CriarCategoryRoute
   ParaSlugRoute: typeof ParaSlugRoute
   CriarIndexRoute: typeof CriarIndexRoute
@@ -122,6 +135,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/minhas': {
+      id: '/minhas'
+      path: '/minhas'
+      fullPath: '/minhas'
+      preLoaderRoute: typeof MinhasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrar': {
       id: '/entrar'
       path: '/entrar'
@@ -190,6 +210,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRouteWithChildren,
   EntrarRoute: EntrarRoute,
+  MinhasRoute: MinhasRoute,
   CriarCategoryRoute: CriarCategoryRoute,
   ParaSlugRoute: ParaSlugRoute,
   CriarIndexRoute: CriarIndexRoute,
