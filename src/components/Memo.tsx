@@ -2,15 +2,14 @@
  * Memo — a estrelinha guardiã das memórias.
  * Renderiza as poses oficiais (3D renders) da identidade visual.
  */
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import memoHero from "@/assets/memo/memo-hero.png";
-import memoWave from "@/assets/memo/memo-wave.png";
-import memoHeart from "@/assets/memo/memo-heart.png";
-import memoPhoto from "@/assets/memo/memo-photo.png";
-import memoThinking from "@/assets/memo/memo-thinking.png";
-import memoCelebrate from "@/assets/memo/memo-celebrate.png";
-import memoAvatar from "@/assets/memo/memo-avatar.png";
+import memoHero from "@/assets/memo/memo-hero.webp";
+import memoWave from "@/assets/memo/memo-wave.webp";
+import memoHeart from "@/assets/memo/memo-heart.webp";
+import memoPhoto from "@/assets/memo/memo-photo.webp";
+import memoThinking from "@/assets/memo/memo-thinking.webp";
+import memoCelebrate from "@/assets/memo/memo-celebrate.webp";
+import memoAvatar from "@/assets/memo/memo-avatar.webp";
 
 export type MemoMood =
   | "idle"
