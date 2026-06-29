@@ -4,7 +4,7 @@ import { useBuilder } from "@/lib/builder-store";
 import { saveDraft } from "@/lib/homenagens";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — Memora" }] }),
@@ -14,19 +14,31 @@ export const Route = createFileRoute("/checkout")({
 function Checkout() {
   const navigate = useNavigate();
   const s = useBuilder();
-  const [email, setEmail] = useState("");
-  const [starting, setStarting] = useState(false);
-
 
   const priceId = s.plan === "eternal" ? "memora_eterno_onetime" : "memora_temporario_onetime";
   const price = s.plan === "eternal" ? "R$ 29,90" : "R$ 19,90";
   const planName = s.plan === "eternal" ? "Eterno" : "Temporário";
   const slug = s.slug || "sua-homenagem";
-  const url = `memora.app/para/${slug}`;
 
   const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/checkout/return?session_id={CHECKOUT_SESSION_ID}&slug=${encodeURIComponent(slug)}&plan=${s.plan ?? "temporary"}`;
 
-  const canStart = email.includes("@") && email.length > 5;
+  // Persist draft snapshot up front so the public link + Minhas Homenagens
+  // can render the tribute after payment, even on reload.
+  useEffect(() => {
+    saveDraft(slug, {
+      category: s.category,
+      fromName: s.fromName,
+      toName: s.toName,
+      startDate: s.startDate,
+      openingPhrase: s.openingPhrase,
+      mainMessage: s.mainMessage,
+      media: s.media,
+      timeline: s.timeline,
+      templateId: s.templateId,
+      music: s.music,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   return (
     <main className="bg-builder min-h-screen">
@@ -45,65 +57,25 @@ function Checkout() {
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary/80">Finalizando</p>
             <h1 className="mt-1 font-display text-3xl font-extrabold sm:text-4xl">Quase lá — falta só o presente subir.</h1>
-            <p className="mt-2 text-sm text-muted-foreground">A homenagem fica privada até o pagamento ser confirmado. Sem pagamento, o link não publica.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Conclua o pagamento abaixo. Assim que confirmar, seu link e QR Code são liberados na próxima tela.</p>
           </div>
 
-          {!starting ? (
-            <>
-              <div>
-                <p className="mb-2 text-sm font-semibold">Seu e-mail (para receber o link e o QR Code)</p>
-                <input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                  placeholder="voce@email.com"
-                  className="memora-input"
-                />
-              </div>
-              <button
-                onClick={() => {
-                  if (!canStart) return;
-                  // Persist draft snapshot so the public link + Minhas Homenagens
-                  // can render the tribute after payment, even on reload.
-                  saveDraft(slug, {
-                    category: s.category,
-                    fromName: s.fromName,
-                    toName: s.toName,
-                    startDate: s.startDate,
-                    openingPhrase: s.openingPhrase,
-                    mainMessage: s.mainMessage,
-                    media: s.media,
-                    timeline: s.timeline,
-                    templateId: s.templateId,
-                    music: s.music,
-                  });
-                  setStarting(true);
-                }}
-                disabled={!canStart}
-                className="btn-gold w-full justify-center text-sm"
-              >
-                Pagar {price} com Stripe <Lock className="h-4 w-4" />
-              </button>
+          <div className="rounded-2xl border border-border bg-card/60 p-2 sm:p-4">
+            <StripeEmbeddedCheckout
+              priceId={priceId}
+              returnUrl={returnUrl}
+              metadata={{
+                slug,
+                plan: s.plan ?? "temporary",
+                to_name: s.toName ?? "",
+                from_name: s.fromName ?? "",
+              }}
+            />
+          </div>
 
-              <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                <ShieldCheck className="h-3 w-3" /> Sem reembolso após pagamento (produto digital).
-              </p>
-            </>
-          ) : (
-            <div className="rounded-2xl border border-border bg-card/60 p-2 sm:p-4">
-              <StripeEmbeddedCheckout
-                priceId={priceId}
-                customerEmail={email}
-                returnUrl={returnUrl}
-                metadata={{
-                  slug,
-                  plan: s.plan ?? "temporary",
-                  to_name: s.toName ?? "",
-                  from_name: s.fromName ?? "",
-                }}
-              />
-            </div>
-          )}
+          <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+            <ShieldCheck className="h-3 w-3" /> Sem reembolso após pagamento (produto digital).
+          </p>
         </section>
 
         <aside className="h-fit rounded-2xl border border-border bg-card/60 p-5 lg:sticky lg:top-20">

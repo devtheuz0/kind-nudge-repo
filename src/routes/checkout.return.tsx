@@ -132,15 +132,11 @@ function CheckoutReturn() {
           Sua homenagem está no ar ✨
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          {email && (
-            <>
-              Recibo no seu e-mail <span className="text-cream">{email}</span>.{" "}
-            </>
-          )}
           {plan === "eternal"
             ? "Link vitalício, fica para sempre."
             : "Link válido por 1 ano."}
         </p>
+
 
         <div className="mt-8 grid gap-6 sm:grid-cols-[auto_1fr] sm:text-left">
           <div ref={qrWrapRef} className="mx-auto rounded-2xl bg-cream p-4">
