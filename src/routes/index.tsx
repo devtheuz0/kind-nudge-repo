@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Check, Heart, ImageIcon, Infinity as InfinityIcon, Music2, QrCode, Shield, Sparkles, Star, Timer } from "lucide-react";
+import { ArrowRight, Check, FolderHeart, Heart, ImageIcon, Infinity as InfinityIcon, Music2, QrCode, Shield, Sparkles, Star, Timer } from "lucide-react";
 import { useState } from "react";
 import { Memo } from "@/components/Memo";
 import { TemplateBackdrop } from "@/components/templates/TemplateBackdrop";
