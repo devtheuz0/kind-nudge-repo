@@ -2,15 +2,14 @@
  * Memo — a estrelinha guardiã das memórias.
  * Renderiza as poses oficiais (3D renders) da identidade visual.
  */
-import { useState } from "react";
 import { cn } from "@/lib/utils";
-import memoHero from "@/assets/memo/memo-hero.png";
-import memoWave from "@/assets/memo/memo-wave.png";
-import memoHeart from "@/assets/memo/memo-heart.png";
-import memoPhoto from "@/assets/memo/memo-photo.png";
-import memoThinking from "@/assets/memo/memo-thinking.png";
-import memoCelebrate from "@/assets/memo/memo-celebrate.png";
-import memoAvatar from "@/assets/memo/memo-avatar.png";
+import memoHero from "@/assets/memo/memo-hero.webp";
+import memoWave from "@/assets/memo/memo-wave.webp";
+import memoHeart from "@/assets/memo/memo-heart.webp";
+import memoPhoto from "@/assets/memo/memo-photo.webp";
+import memoThinking from "@/assets/memo/memo-thinking.webp";
+import memoCelebrate from "@/assets/memo/memo-celebrate.webp";
+import memoAvatar from "@/assets/memo/memo-avatar.webp";
 
 export type MemoMood =
   | "idle"
@@ -50,18 +49,11 @@ export function Memo({
   alt?: string;
   priority?: boolean;
 }) {
-  const [loaded, setLoaded] = useState(false);
   return (
     <span
       className={cn("relative inline-block align-middle", className)}
       style={{ width: size, height: size }}
     >
-      {!loaded && (
-        <span
-          aria-hidden
-          className="absolute inset-2 animate-pulse rounded-full bg-primary/15 blur-md"
-        />
-      )}
       <img
         src={SRC[mood]}
         alt={alt}
@@ -70,13 +62,11 @@ export function Memo({
         draggable={false}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
-        // @ts-expect-error - fetchpriority is valid HTML, not yet in React types in some versions
+        // @ts-expect-error - fetchpriority is valid HTML
         fetchpriority={priority ? "high" : "auto"}
-        onLoad={() => setLoaded(true)}
         className={cn(
-          "select-none object-contain drop-shadow-[0_10px_30px_rgba(245,196,106,0.35)] transition-opacity duration-300",
-          loaded ? "opacity-100" : "opacity-0",
-          animate && loaded && "animate-bob",
+          "select-none object-contain drop-shadow-[0_10px_30px_rgba(245,196,106,0.35)]",
+          animate && "animate-bob",
         )}
         style={{ width: size, height: size }}
       />
