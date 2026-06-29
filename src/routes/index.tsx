@@ -235,7 +235,7 @@ function Landing() {
           {[
             { q: "Como a pessoa recebe a homenagem?", a: "Você recebe um link único + um QR Code. Pode mandar no WhatsApp, imprimir num cartão ou colar no presente." },
             { q: "Funciona em qualquer celular?", a: "Sim. A homenagem abre direto no navegador — sem app, sem cadastro pra quem recebe." },
-            { q: "Eu posso editar depois?", a: "Pode. Você acessa via link mágico no e-mail, edita fotos, mensagem e música a qualquer momento." },
+            { q: "Eu posso editar depois?", a: "Sim. Em \"Minhas homenagens\" você acessa todos os seus rascunhos e publicações direto do navegador, sem senha." },
             { q: "A música é legalizada?", a: "Usamos prévias oficiais (30s) via API pública. Nada de upload pirata." },
             { q: "E se eu desistir?", a: "Você só paga ao publicar. Antes disso, tudo fica em rascunho." },
           ].map((f) => (
