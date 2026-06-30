@@ -21,7 +21,7 @@ export const Route = createFileRoute("/checkout/return")({
 function CheckoutReturn() {
   const { session_id, slug, plan } = Route.useSearch();
   const [state, setState] = useState<"loading" | "paid" | "open" | "error">("loading");
-  const [email, setEmail] = useState<string | null>(null);
+  const [, setEmail] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const qrWrapRef = useRef<HTMLDivElement>(null);
 
