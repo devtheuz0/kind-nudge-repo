@@ -36,7 +36,7 @@ function CheckoutReturn() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await getCheckoutSessionStatus({
+        const res = await confirmPayment({
           data: { sessionId: session_id, environment: getStripeEnvironment() },
         });
         if (cancelled) return;
@@ -44,16 +44,17 @@ function CheckoutReturn() {
           setState("error");
           return;
         }
-        setEmail(res.customerEmail);
-        const paid = res.paymentStatus === "paid" || res.status === "complete";
-        if (paid && slug) {
+        if (res.paid && slug) {
+          setEmail(res.email);
           markPaid(slug, {
             plan: (plan as Plan) ?? "temporary",
-            email: res.customerEmail,
+            email: res.email,
             sessionId: session_id,
           });
+          setState("paid");
+        } else {
+          setState("open");
         }
-        setState(paid ? "paid" : "open");
       } catch {
         if (!cancelled) setState("error");
       }
