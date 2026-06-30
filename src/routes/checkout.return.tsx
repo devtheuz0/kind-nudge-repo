@@ -4,7 +4,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { Check, Copy, Download, Loader2, Share2 } from "lucide-react";
 import { Memo } from "@/components/Memo";
 import { getStripeEnvironment } from "@/lib/stripe";
-import { getCheckoutSessionStatus } from "@/utils/payments.functions";
+import { confirmPayment } from "@/utils/homenagens.functions";
 import { markPaid } from "@/lib/homenagens";
 import type { Plan } from "@/lib/builder-store";
 
