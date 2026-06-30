@@ -22,10 +22,10 @@ function Checkout() {
 
   const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/checkout/return?session_id={CHECKOUT_SESSION_ID}&slug=${encodeURIComponent(slug)}&plan=${s.plan ?? "temporary"}`;
 
-  // Persist draft snapshot up front so the public link + Minhas Homenagens
-  // can render the tribute after payment, even on reload.
+  // Persist draft snapshot to local + server up front so the public link
+  // (and Minhas Homenagens) renders the tribute on any device after payment.
   useEffect(() => {
-    saveDraft(slug, {
+    const data = {
       category: s.category,
       fromName: s.fromName,
       toName: s.toName,
@@ -36,13 +36,15 @@ function Checkout() {
       timeline: s.timeline,
       templateId: s.templateId,
       music: s.music,
-    });
+    };
+    saveDraft(slug, data);
+    upsertDraft({ data: { slug, data } }).catch((e) => console.error("draft sync", e));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   return (
     <main className="bg-builder min-h-screen">
-      <PaymentTestModeBanner />
+
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <button onClick={() => navigate({ to: "/criar/$category", params: { category: s.category ?? "amor" } })} className="btn-ghost text-xs">
