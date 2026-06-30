@@ -2,8 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check, Lock, ShieldCheck } from "lucide-react";
 import { useBuilder } from "@/lib/builder-store";
 import { saveDraft } from "@/lib/homenagens";
+import { upsertDraft } from "@/utils/homenagens.functions";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
-import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/checkout")({
