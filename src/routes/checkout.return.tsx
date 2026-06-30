@@ -4,7 +4,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { Check, Copy, Download, Loader2, Share2 } from "lucide-react";
 import { Memo } from "@/components/Memo";
 import { getStripeEnvironment } from "@/lib/stripe";
-import { getCheckoutSessionStatus } from "@/utils/payments.functions";
+import { confirmPayment } from "@/utils/homenagens.functions";
 import { markPaid } from "@/lib/homenagens";
 import type { Plan } from "@/lib/builder-store";
 
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/checkout/return")({
 function CheckoutReturn() {
   const { session_id, slug, plan } = Route.useSearch();
   const [state, setState] = useState<"loading" | "paid" | "open" | "error">("loading");
-  const [email, setEmail] = useState<string | null>(null);
+  const [, setEmail] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const qrWrapRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +36,7 @@ function CheckoutReturn() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await getCheckoutSessionStatus({
+        const res = await confirmPayment({
           data: { sessionId: session_id, environment: getStripeEnvironment() },
         });
         if (cancelled) return;
@@ -44,16 +44,17 @@ function CheckoutReturn() {
           setState("error");
           return;
         }
-        setEmail(res.customerEmail);
-        const paid = res.paymentStatus === "paid" || res.status === "complete";
-        if (paid && slug) {
+        if (res.paid && slug) {
+          setEmail(res.email);
           markPaid(slug, {
             plan: (plan as Plan) ?? "temporary",
-            email: res.customerEmail,
+            email: res.email,
             sessionId: session_id,
           });
+          setState("paid");
+        } else {
+          setState("open");
         }
-        setState(paid ? "paid" : "open");
       } catch {
         if (!cancelled) setState("error");
       }

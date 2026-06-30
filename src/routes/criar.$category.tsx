@@ -277,11 +277,13 @@ function StepOne() {
 
 function StepTwo() {
   const media = useBuilder((s) => s.media);
+  const slug = useBuilder((s) => s.slug);
   const addMedia = useBuilder((s) => s.addMedia);
   const removeMedia = useBuilder((s) => s.removeMedia);
   const updateCaption = useBuilder((s) => s.updateMediaCaption);
   const plan = useBuilder((s) => s.plan);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(0);
   const max = plan === "temporary" ? 20 : 100;
 
   const counts = {
@@ -290,17 +292,26 @@ function StepTwo() {
     audio: media.filter((m) => m.type === "audio").length,
   };
 
-  const onFiles = (files: FileList | null) => {
+  const onFiles = async (files: FileList | null) => {
     if (!files) return;
-    Array.from(files).forEach((file) => {
-      if (media.length >= max) return;
+    const { uploadHomenagemMedia } = await import("@/lib/media-upload");
+    for (const file of Array.from(files)) {
+      if (media.length + counts.photo >= max) break;
       const type: MediaItem["type"] = file.type.startsWith("video")
         ? "video"
         : file.type.startsWith("audio")
         ? "audio"
         : "photo";
-      addMedia({ type, url: URL.createObjectURL(file), name: file.name, caption: "" });
-    });
+      setUploading((n) => n + 1);
+      try {
+        const { url } = await uploadHomenagemMedia(slug || "draft", file);
+        addMedia({ type, url, name: file.name, caption: "" });
+      } catch (e) {
+        console.error("upload failed", e);
+      } finally {
+        setUploading((n) => Math.max(0, n - 1));
+      }
+    }
   };
 
   return (

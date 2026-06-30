@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      homenagens: {
+        Row: {
+          created_at: string
+          data: Json
+          edit_token: string
+          email: string | null
+          expires_at: string | null
+          paid_at: string | null
+          plan: string | null
+          session_id: string | null
+          slug: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          edit_token?: string
+          email?: string | null
+          expires_at?: string | null
+          paid_at?: string | null
+          plan?: string | null
+          session_id?: string | null
+          slug: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          edit_token?: string
+          email?: string | null
+          expires_at?: string | null
+          paid_at?: string | null
+          plan?: string | null
+          session_id?: string | null
+          slug?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
